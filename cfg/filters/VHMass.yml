@@ -1,0 +1,48 @@
+MinMaxDPhi:
+  type: MinMax
+  branch: dim_mass
+  args: []
+  kwargs:
+    min: 5000
+    max: inf
+
+# MinMax_phi:
+#   type: MinMax
+#   branch: dsamu_phi
+#   args: []
+#   kwargs:
+#     min: 0
+#     max: None
+
+# MinMax_eta:
+#   type: MinMax
+#   branch: dsamu_eta
+#   args: []
+#   kwargs:
+#     min: -0.5
+#     max: 0
+
+
+# MinMax_deltaPhi:
+#   type: MinMax
+#   branch: dim_deltaPhi
+#   args: []
+#   kwargs:
+#     min: 0.25pi
+#     max: 0.8pi
+
+# MinMax_cosAlpha:
+#   type: MinMax
+#   branch: dim_cosAlpha
+#   args: []
+#   kwargs:
+#     min: -1
+#     max: 0.95
+
+# MinMax_isoPmumu:
+#   type: MinMax
+#   branch: dim_isoPmumu
+#   args: []
+#   kwargs:
+#     min: 0
+#     max: 0.02

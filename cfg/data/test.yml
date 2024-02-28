@@ -1,0 +1,14 @@
+testData:
+  type:     root
+  path:     /pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022C-ReReco-v2.root
+  year:     2022
+  era:      C
+  version:  2
+
+testSim:
+  type:     root
+  path:     /pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/Feb2023-v1/ntuple_2022_HTo2XTo4Mu_1000_150_1000.root
+  signal:   H->2X->4Mu
+  mass:     1000
+  dmin:     150
+  dmax:     1000

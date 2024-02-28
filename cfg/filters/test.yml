@@ -1,0 +1,34 @@
+MinMaxDPhi:
+  type: MinMax
+  branch: dim_deltaPhi
+  args: []
+  kwargs:
+    min: 0
+    max: pi/20
+
+# MinMaxPt1:
+#   type: MinMax
+#   branch: dim_mu1_pt
+#   args: []
+#   kwargs:
+#     min: 0
+#     max: 150
+
+
+
+OppositeCharge:
+  type: OppositeSigned
+  branch:
+    - dim_mu1_charge
+    - dim_mu2_charge
+  args: []
+  kwargs: {}
+
+
+# SameCharge:
+#  type: SameSigned
+#  branch:
+#    - dim_mu1_charge
+#    - dim_mu2_charge
+#  args: []
+#  kwargs: {}
