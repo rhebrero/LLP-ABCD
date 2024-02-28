@@ -2,7 +2,7 @@ using Vbool = ROOT::VecOps::RVec<bool>;
 using Vfloat = ROOT::VecOps::RVec<float>;
 using Vint = ROOT::VecOps::RVec<int>;
 
-Int_t mu_nPrompt( 
+int mu_nPrompt( 
     Vfloat  mu_d0_pv,
     float   d0_cut
 ) {
@@ -11,7 +11,7 @@ Int_t mu_nPrompt(
         unsigned int n = mu_d0_pv.size();
 
     // Número de 
-        Int_t nPrompt;
+        int nPrompt;
 
     // Miramos si pasan el corte
         for (unsigned int i=0; i<n; ++i) {

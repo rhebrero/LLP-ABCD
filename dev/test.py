@@ -65,7 +65,10 @@ for i in range(10):
     new_branches['patmu_mu1_d0_idx']['value'] = get2Highest_d0[0]
     new_branches['patmu_mu2_d0_idx']['value'] = get2Highest_d0[1]
     
-    print(new_branches['patmu_pt']['value'],passing_idx)
+    print(tree.patmu_px)
+    print(tree.patmu_py)
+    print(new_branches['patmu_pt']['value'], type(new_branches['patmu_pt']['value']))
+    print(passing_idx,type(passing_idx))
     get2Highest_pt = rt.getNHighest(tree.patmu_pt, passing_idx, 2, False)
     new_branches['patmu_mu1_pt_idx']['value'] = get2Highest_pt[0]
     new_branches['patmu_mu2_pt_idx']['value'] = get2Highest_pt[1]

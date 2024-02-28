@@ -10,6 +10,39 @@ from llp.utils.paths import data_directory, check_root_file
 
 import os, sys
 
+class Branch(object):
+    def __init__(
+        self,
+        tree,
+        branch_name,
+        value,
+        fType,
+        alias = None,           # Will set an alias
+        f = None,
+        vector = False,
+        **kwargs
+    ):
+        self.f = f
+        self.kwargs = kwargs
+        self.value = value
+        self.name = branch_name
+        self.tree = tree
+        self.fType = fType
+        self.alias = alias
+        self.vector = vector
+        
+        self.tree.Branch(branch_name, self.value, f'{branch_name}/{fType}')
+        self.tree.SetBranchAddress(branch_name, self.value)
+
+    def __call__(self):
+        if self.f:
+            result = self.f(self.tree,**self.kwargs)
+            if not self.vector:
+                self.value[0] = result
+            else:
+                self.value = result
+    
+
 
 class Tree(object):
     active_trees = 0
@@ -168,36 +201,21 @@ class Tree(object):
         f,
         fType,
         default_value,
-        vectorial,
+        vector,
         **kwargs
     ):
-        self.entry[branch_name] = default_value
-        
-        # pdb.set_trace()
-        self.tree.Branch(branch_name, self.entry[branch_name], f'{branch_name}/{fType}')
 
-        self.new_branches[branch_name] = self.branch_updater(branch_name,f,vectorial,**kwargs)
-    
-    def branch_updater(self,branch_name,f,vectorial,**kwargs):
-        if vectorial:
-            def update_vectorial_branch(entry):
-                result = f(entry,**kwargs)
-                self.entry[branch_name].clear()
-                
-                for i in range(len(result)):
-                    self.entry[branch_name][i] = result[i] 
-                 
-            return update_vectorial_branch
-        else:
-            def update_vectorial_branch(entry):
-                result = f(entry,**kwargs)
-                self.entry[branch_name].clear()
-                
-                self.entry[branch_name][0] = result
-                 
-            return update_vectorial_branch
-            
-    
+        self.new_branches[branch_name] = Branch(
+                                                self.tree                   ,
+                                                branch_name                 ,
+                                                value       = default_value ,
+                                                fType       = fType         ,
+                                                f           = f             ,
+                                                vector      = vector        ,
+                                                **kwargs
+                                            )
+        
+        
     
     
         
@@ -209,24 +227,20 @@ class Tree(object):
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
             self.tree.GetEntry(n_entry)
             
-            print('\n Before update Entry fill')
-            for branch_name in self.new_branches.keys():
-                print(f'{branch_name}: {self.entry[branch_name]} -> {getattr(self.tree,branch_name)}',)
+            print('\n Before Branch update')
+            for branch_name, branch in self.new_branches.items():
+                print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}',)
 
+                branch()
             
-            for branch_name, f in self.new_branches.items(): # Update each branch using the updater.
-                f(self.tree)
-            
-            print('\n Before TTree fill')
-            for branch_name in self.new_branches.keys():
-                print(f'{branch_name}: {self.entry[branch_name]} -> {getattr(self.tree,branch_name)}',)
+            print('\n After Branch update')
+            for branch_name, branch in self.new_branches.items():
+                print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}',)
 
             
             
             self.tree.Fill()
-            print('\n After TTree fill')
-            for branch_name in self.new_branches.keys():
-                print(f'{branch_name}: {self.entry[branch_name]} -> {getattr(self.tree,branch_name)}',)
+            
             exit()
         
         self.write()
@@ -247,6 +261,7 @@ class Tree(object):
     
     def set_branches(self):
         self.tree.SetBranchStatus('*',1)    
+        return
         for branch_name, branch_value in self.entry.items():            
             if branch_name in self.new_branches.keys():
                 continue

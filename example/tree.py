@@ -2,7 +2,7 @@ from llp.pyroot.macros import mu_nPrompt, pt
 from llp.utils.macros import load_macro
 from llp.pyroot import Tree
 import ROOT
-
+from array import array
 
 
 files = [
@@ -30,20 +30,21 @@ t1 = Tree(
 t1.add_branch(
     'patmu_nPrompt',
     mu_nPrompt,
+    vector = False,
     fType='I',
-    default_value= ROOT.VecOps.RVec('int')((0)),
+    default_value= array('i',[-999]),
     d0_cut = 0.1,
     mu_type = 'pat',
-    vectorial = False
 )
 
-# t1.add_branch(
-#     'patmu_pt',
-#     pt,
-#     fType='F',
-#     mu_type = 'pat',
-#     default_value=ROOT.VecOps.RVec('float')((0))
-# )
+t1.add_branch(
+    'patmu_pt',
+    pt,
+    fType='F',
+    mu_type = 'pat',
+    default_value = array('f',[]),
+    vector = True
+)
 
 t1.process_branches()
 t1.close()
