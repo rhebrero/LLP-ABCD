@@ -10,8 +10,6 @@ from llp.utils.paths import data_directory, check_root_file
 
 import os, sys
 
-from torch import Value
-
 
 class Tree(object):
     active_trees = 0
