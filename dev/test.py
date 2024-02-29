@@ -39,7 +39,8 @@ for branch_name, branch_dict in new_branches.items():
     tree.Branch(branch_name, branch_dict['value'])
 
 muType = 'pat'
-debug_step = 1
+debug = True
+debug_step = 10000
 # tree.SetAlias('patmu_pt','sqrt(patmu_px**2+patmu_py**2)')
 
 load_macro('selectionCut')
@@ -48,7 +49,7 @@ load_macro('pt')
 
 
 print(f'Corte: {cut_string}')
-for i in range(10):
+for i in range(tree.GetEntries()):
     tree.GetEntry(i)
     # N = len(getattr(tree,f'{muType}mu_idx'))
     # print(format_cut(cut_string,N))
@@ -66,7 +67,7 @@ for i in range(10):
     new_branches['patmu_mu1_pt_idx']['value'] = get2Highest_pt[0]
     new_branches['patmu_mu2_pt_idx']['value'] = get2Highest_pt[1]
 
-    if not i % debug_step & len(passing_idx) >= 2:
+    if not i % debug_step & len(passing_idx) >= 2 & debug:
         passing_d0 = [tree.patmu_d0_pv[i] for i in passing_idx]
         passing_pt = [tree.patmu_pt[i] for i in passing_idx]
         print(

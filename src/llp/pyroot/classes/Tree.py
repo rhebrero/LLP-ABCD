@@ -28,23 +28,30 @@ class Branch(object):
         self.value = value
         self.name = branch_name
         self.tree = tree
-        self.fType = fType
         self.alias = alias
         self.vector = vector
         self.priority = priority
         
         if fType:
-            if vector:
-                branch_type = f'{branch_name}[{vector}]/{fType}'
+            if self.vector:
+                self.fType = f'{self.name}[{self.vector}]/{self.fType}'
             else:
-                branch_type = f'{branch_name}/{fType}'
-            
-            self.tree.Branch(branch_name, self.value, branch_type)
+                self.fType = f'{self.name}/{self.fType}'
         else:
-            self.tree.Branch(branch_name, self.value)
+            self.fType = None
         
-        self.tree.SetBranchAddress(branch_name, self.value)
-
+        self.set_branches()
+        
+    def set_branches(self):
+        
+        if self.fType:
+            self.tree.Branch(self.name, self.value, self.fType)
+        else:
+            self.tree.Branch(self.name, self.value)
+        
+        self.tree.SetBranchAddress(self.name, self.value)
+    
+    
     def __call__(self):
         if self.f:
             self.value.clear()  
@@ -61,7 +68,37 @@ class Branch(object):
                 # self.value.extend(result)
 
 
+class BranchCollection(Branch):
+    def __init__(
+        self,
+        tree,
+        branch_name,
+        value,
+        n,
+        fType = None,
+        alias = None,           # Will set an alias
+        f = None,
+        vector = False,
+        priority = 0,
+        **kwargs
+    ):
+        #TODO: Terminar esto para poder producir N branches a partir del nombre con *
+                        
+        
+        self.branches = {
+            branch_name.replace('*',i) : Branch(tree,branch_name,value,fType,alias,f,vector,priority,n=n,**kwargs)
+            for i in range(n)
+        }
 
+    def set_branches(self):
+        # Función dummy.
+        return
+    
+    def __call__(self):
+        for name, branch in self.branches:
+            pass
+        
+        
 class Tree(object):
     active_trees = 0
     known_alias = set()
