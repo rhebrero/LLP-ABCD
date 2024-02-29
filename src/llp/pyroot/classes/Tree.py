@@ -1,4 +1,3 @@
-from genericpath import isfile
 import ROOT as rt
 import pathlib, inspect
 from collections.abc import Iterable
@@ -7,8 +6,9 @@ import numpy as np
 import pdb
 
 from llp.utils.paths import data_directory, check_root_file
-
+from copy import deepcopy
 import os, sys
+
 
 class Branch(object):
     def __init__(
@@ -16,10 +16,11 @@ class Branch(object):
         tree,
         branch_name,
         value,
-        fType,
+        fType = None,
         alias = None,           # Will set an alias
         f = None,
         vector = False,
+        priority = 0,
         **kwargs
     ):
         self.f = f
@@ -30,18 +31,35 @@ class Branch(object):
         self.fType = fType
         self.alias = alias
         self.vector = vector
+        self.priority = priority
         
-        self.tree.Branch(branch_name, self.value, f'{branch_name}/{fType}')
+        if fType:
+            if vector:
+                branch_type = f'{branch_name}[{vector}]/{fType}'
+            else:
+                branch_type = f'{branch_name}/{fType}'
+            
+            self.tree.Branch(branch_name, self.value, branch_type)
+        else:
+            self.tree.Branch(branch_name, self.value)
+        
         self.tree.SetBranchAddress(branch_name, self.value)
 
     def __call__(self):
         if self.f:
-            result = self.f(self.tree,**self.kwargs)
+            self.value.clear()  
             if not self.vector:
-                self.value[0] = result
+                self.value.push_back(self.f(self.tree,**self.kwargs))
             else:
-                self.value = result
-    
+                # PyROOT RVec
+                
+                [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
+                
+                # Python Array
+                # [self.value.pop() for e in range(len(self.value))]
+                # self.value.append(result[0])
+                # self.value.extend(result)
+
 
 
 class Tree(object):
@@ -90,6 +108,7 @@ class Tree(object):
             self.output_path = output_path
         
         self._branches  = branches
+        self._branch_priority = None
         self._tree_path = tree_path
         self._tree = None
         
@@ -199,9 +218,9 @@ class Tree(object):
         self,
         branch_name,
         f,
-        fType,
         default_value,
-        vector,
+        fType = None,
+        vector = None,
         **kwargs
     ):
 
@@ -215,9 +234,13 @@ class Tree(object):
                                                 **kwargs
                                             )
         
-        
+    @property
+    def branch_priority(self):
+        return self._branch_priority
     
-    
+    def set_branch_priority(self):
+        p_set = sorted(set([branch.priority for branch in self.new_branches.values()]),reverse=True)
+        self._branch_priority = {p : {name : branch for name, branch in self.new_branches.items() if branch.priority == p} for p in p_set}
         
     def process_branches(self):
         self.set_branches()
@@ -227,40 +250,47 @@ class Tree(object):
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
             self.tree.GetEntry(n_entry)
             
-            print('\n Before Branch update')
-            for branch_name, branch in self.new_branches.items():
-                print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}',)
-
-                branch()
+            # print(
+            #     '\n'
+            #     '======================================\n'
+            #     f'        EVENT {n_entry}\n'
+            #     '======================================'
+            # )
             
-            print('\n After Branch update')
-            for branch_name, branch in self.new_branches.items():
-                print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}',)
+            # print('\n Branch update')
+            for p, branch_dict in self.branch_priority.items():
+                for branch_name, branch in branch_dict.items():
+                    # print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}')
+
+                    branch()
+            
+            # print('\n After Branch update')
+            # for branch_name, branch in self.new_branches.items():
+            #     print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}')
 
             
             
             self.tree.Fill()
-            
-            exit()
-        
+                    
         self.write()
         return
         
     
     def write(self):
         print(f'Guardando cambios...')
-        self.tree.Write()
         self.is_written = True
+        self.file.Write()
         return
     
     def close(self):
         print(f'Cerrando archivo: {self.output_path}')
-        # if not self.is_written: self.write()
+        if not self.is_written: self.write()
         
-        self.file.Close('R')
+        self.file.Close()
     
     def set_branches(self):
-        self.tree.SetBranchStatus('*',1)    
+        self.tree.SetBranchStatus('*',1)
+        self.set_branch_priority()
         return
         for branch_name, branch_value in self.entry.items():            
             if branch_name in self.new_branches.keys():
@@ -321,7 +351,6 @@ if __name__ == '__main__':
         mu_type = 'dsa'
     )
     t1.process_branches()
-    t1.close()
 
 
 # trigger_list = ['a','b','c']

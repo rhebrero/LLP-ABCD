@@ -1,4 +1,4 @@
-from llp.pyroot.macros import mu_nPrompt, pt
+from llp.pyroot.macros import mu_nPrompt, pt, nMuons
 from llp.utils.macros import load_macro
 from llp.pyroot import Tree
 import ROOT
@@ -14,11 +14,11 @@ t1 = Tree(
     'SimpleNTupler/DDTree',
     files = files,
     branches = {
-            'patmu_d0_pv'   : ROOT.VecOps.RVec('float')((0)),
-            'dsamu_d0_pv'   : ROOT.VecOps.RVec('float')((0)),
-            'patmu_idx'     : ROOT.VecOps.RVec('int')((0)),
-            'patmu_px'      : ROOT.VecOps.RVec('float')((0)),
-            'patmu_py'      : ROOT.VecOps.RVec('float')((0))
+            'patmu_d0_pv'   : ROOT.VecOps.RVec('float')(),
+            'dsamu_d0_pv'   : ROOT.VecOps.RVec('float')(),
+            'patmu_idx'     : ROOT.VecOps.RVec('int')(),
+            'patmu_px'      : ROOT.VecOps.RVec('float')(),
+            'patmu_py'      : ROOT.VecOps.RVec('float')()
         },
     debug = True,
     nentries = int(1e5),
@@ -28,22 +28,28 @@ t1 = Tree(
 )
 
 t1.add_branch(
+    'patmu_nMuons',
+    nMuons,
+    default_value= ROOT.VecOps.RVec('int')(),
+    mu_type = 'pat',
+    priority = 1
+)
+
+t1.add_branch(
     'patmu_nPrompt',
     mu_nPrompt,
-    vector = False,
-    fType='I',
-    default_value= array('i',[-999]),
+    default_value= ROOT.VecOps.RVec('int')(),
     d0_cut = 0.1,
     mu_type = 'pat',
 )
 
+
 t1.add_branch(
     'patmu_pt',
     pt,
-    fType='F',
     mu_type = 'pat',
-    default_value = array('f',[]),
-    vector = True
+    default_value = ROOT.VecOps.RVec('float')(),
+    vector = 'patmu_nMuons'
 )
 
 t1.process_branches()
