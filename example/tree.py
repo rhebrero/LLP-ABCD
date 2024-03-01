@@ -1,4 +1,4 @@
-from llp.pyroot.macros import mu_nPrompt, pt, nMuons
+from llp.pyroot.macros import mu_nPrompt, pt, nMuons, getNHighest
 from llp.utils.macros import load_macro
 from llp.pyroot import Tree
 import ROOT
@@ -21,9 +21,9 @@ t1 = Tree(
             'patmu_py'      : ROOT.VecOps.RVec('float')()
         },
     debug = True,
-    nentries = int(1e5),
+    # nentries = int(10),
     debug_step = int(1e4),
-    output_path='test_nPrompt_1e3',
+    output_path='test',
     overwrite=True
 )
 
@@ -36,6 +36,15 @@ t1.add_branch(
 )
 
 t1.add_branch(
+    'patmu_pt',
+    pt,
+    mu_type = 'pat',
+    default_value = ROOT.VecOps.RVec('float')(),
+    vector = 'patmu_nMuons',
+    priority=1
+)
+
+t1.add_branch(
     'patmu_nPrompt',
     mu_nPrompt,
     default_value= ROOT.VecOps.RVec('int')(),
@@ -43,14 +52,26 @@ t1.add_branch(
     mu_type = 'pat',
 )
 
-
 t1.add_branch(
-    'patmu_pt',
-    pt,
-    mu_type = 'pat',
-    default_value = ROOT.VecOps.RVec('float')(),
-    vector = 'patmu_nMuons'
+    'patmu_mu*_pt',
+    getNHighest,
+    default_value   = ROOT.VecOps.RVec('int')(),
+    mu_type         = 'pat',
+    branch          = 'pt',
+    n               = 2,
+    priority        =-1
 )
 
-t1.process_branches()
+t1.add_branch(
+    'patmu_mu*_d0',
+    getNHighest,
+    default_value   = ROOT.VecOps.RVec('int')(),
+    mu_type         = 'pat',
+    branch          = 'd0_pv',
+    n               = 2,
+    priority        =-1
+)
+
+
+t1.process_branches(verbose=False) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués
 t1.close()
