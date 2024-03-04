@@ -1,4 +1,4 @@
 data
 sandbox
 .vscode
-*.pyc
+**/*.pyc
