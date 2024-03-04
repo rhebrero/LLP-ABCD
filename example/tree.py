@@ -72,6 +72,6 @@ t1.add_branch(
     priority        =-1
 )
 
-
+t1.make_selection('abs(patmu_d0_pv) < 0.1')
 t1.process_branches(verbose=False) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués
 t1.close()

@@ -221,7 +221,7 @@ class Tree(object):
         self.set_branches()
                 
         for i, n_entry in enumerate(range(self.tree.GetEntries())):
-            
+            if not rt.VecOps.Any(self.selection): continue
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
             self.tree.GetEntry(n_entry)
             
