@@ -6,8 +6,6 @@ import numpy as np
 import pdb
 
 from llp.utils.paths import data_directory, check_root_file
-from llp.pyroot.macros import selectionMask
-from torch import Value
 from .Branch import Branch, BranchCollection
 from copy import deepcopy
 import os, sys
@@ -27,8 +25,7 @@ class Tree(object):
         nentries = -1,
         debug_step = 10000,
         output_path = None,
-        overwrite = False,
-        selection = None
+        overwrite = False
     ):
         if not alias:
             self._alias = f't{self.active_trees}'
@@ -68,14 +65,12 @@ class Tree(object):
         self._tree = None
         
         
-        # TFile y TTree para poder crear nuevas ramas
+        # TFile y TTree temporales para poder crear nuevas ramas
         self._file = None
         self._tree = None
         
         self.load_files()
         
-        # Crear una seleccion
-        self.make_selection(selection)
         
         # branch_name : branch_def for branch_name, branch_def in branches.items()
                         
@@ -221,7 +216,7 @@ class Tree(object):
         self.set_branches()
                 
         for i, n_entry in enumerate(range(self.tree.GetEntries())):
-            # if not rt.VecOps.Any(self.selection): continue
+            
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
             self.tree.GetEntry(n_entry)
             
@@ -246,6 +241,8 @@ class Tree(object):
                 for branch_name, branch in self.new.items():
                     print(branch)
 
+            
+            
             self.tree.Fill()
 
         self.write()
@@ -272,26 +269,11 @@ class Tree(object):
 
         self.activate_branches(self.tree)
         self.set_branch_priority()
+        
+        for branch_name, branch_value in self.new.items():            
+            self.tree.SetBranchStatus(branch_name, 1)
         return
-        for branch_name, branch_value in self.entry.items():            
-            if branch_name in self.new_branches.keys():
-                continue
-            else:
-                self.tree.SetBranchAddress(branch_name, rt.AddressOf(branch_value))
-    
-    @property
-    def selection(self):
-        if isinstance(self._selection, str): return selectionMask(self._selection,self.tree)
-        elif self._selection is None: return rt.VecOps.RVecI((1))
-        elif self._selection is bool: return rt.VecOps.RVecI((self._selection))
-        else:
-            raise TypeError('Type of argument selection in class builder was set wrong:'
-                            f'expected str, bool or None; not {type(self._selection)}')        
-    
-    def make_selection(self,selection):
-        self._selection = selection
-    
-    
+        
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
     from llp.utils.macros import load_macro
@@ -345,5 +327,4 @@ if __name__ == '__main__':
 # selection.append('2')
 
 # selection = [' && '.join([selection_i,trigger]) for selection_i in selection]
-
 
