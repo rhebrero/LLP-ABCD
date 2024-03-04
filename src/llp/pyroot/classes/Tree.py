@@ -6,62 +6,12 @@ import numpy as np
 import pdb
 
 from llp.utils.paths import data_directory, check_root_file
+from .Branch import Branch, BranchCollection
 from copy import deepcopy
 import os, sys
 
-
-class Branch(object):
-    def __init__(
-        self,
-        tree,
-        branch_name,
-        value,
-        fType = None,
-        alias = None,           # Will set an alias
-        f = None,
-        vector = False,
-        priority = 0,
-        **kwargs
-    ):
-        self.f = f
-        self.kwargs = kwargs
-        self.value = value
-        self.name = branch_name
-        self.tree = tree
-        self.fType = fType
-        self.alias = alias
-        self.vector = vector
-        self.priority = priority
+  
         
-        if fType:
-            if vector:
-                branch_type = f'{branch_name}[{vector}]/{fType}'
-            else:
-                branch_type = f'{branch_name}/{fType}'
-            
-            self.tree.Branch(branch_name, self.value, branch_type)
-        else:
-            self.tree.Branch(branch_name, self.value)
-        
-        self.tree.SetBranchAddress(branch_name, self.value)
-
-    def __call__(self):
-        if self.f:
-            self.value.clear()  
-            if not self.vector:
-                self.value.push_back(self.f(self.tree,**self.kwargs))
-            else:
-                # PyROOT RVec
-                
-                [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
-                
-                # Python Array
-                # [self.value.pop() for e in range(len(self.value))]
-                # self.value.append(result[0])
-                # self.value.extend(result)
-
-
-
 class Tree(object):
     active_trees = 0
     known_alias = set()
@@ -87,8 +37,10 @@ class Tree(object):
         Tree.active_trees += 1
         self.is_written = False
         self.overwrite = overwrite
+        self.are_branches_set = False
         
         self.new_branches = {}
+        self.new_collections = {}
         self.entry = {}
         
         self.nentries = nentries
@@ -153,9 +105,7 @@ class Tree(object):
         
         self.activate_branches(tree)
         del src_tree
-    
-        
-        
+            
     def activate_branches(self, tree, verbose = True):
         tree.SetBranchStatus('*',0)
         if self.debug & verbose:
@@ -167,7 +117,10 @@ class Tree(object):
             raise TypeError(f'Type of "branches" is not valid: type is {type(self.branches)} and dict(str : Rtype) was expected.')
         return       
         
-        
+    
+    @property
+    def new(self):
+        return self.new_branches | self.new_collections
     
     @property
     def branches(self):
@@ -214,6 +167,10 @@ class Tree(object):
         else:
             raise ValueError("Invalid type of self.branches.")
     
+    @property
+    def new_branch_names(self):
+        return [branch.name for branch in self.new_branches.values()] + [collection.names for collection in self.new_collections.values()]
+    
     def add_branch(
         self,
         branch_name,
@@ -221,10 +178,11 @@ class Tree(object):
         default_value,
         fType = None,
         vector = None,
+        n = None,
         **kwargs
     ):
-
-        self.new_branches[branch_name] = Branch(
+        if "*" not in branch_name:
+            self.new_branches[branch_name] = Branch(
                                                 self.tree                   ,
                                                 branch_name                 ,
                                                 value       = default_value ,
@@ -233,16 +191,28 @@ class Tree(object):
                                                 vector      = vector        ,
                                                 **kwargs
                                             )
-        
+        else:
+            self.new_collections[branch_name] = BranchCollection(
+                                                self.tree                   ,
+                                                branch_name                 ,
+                                                n           = n             ,
+                                                value       = default_value ,
+                                                fType       = fType         ,
+                                                f           = f             ,
+                                                vector      = vector        ,
+                                                **kwargs
+                                            )
+    
     @property
     def branch_priority(self):
         return self._branch_priority
     
     def set_branch_priority(self):
-        p_set = sorted(set([branch.priority for branch in self.new_branches.values()]),reverse=True)
-        self._branch_priority = {p : {name : branch for name, branch in self.new_branches.items() if branch.priority == p} for p in p_set}
         
-    def process_branches(self):
+        p_set = sorted(set([branch.priority for branch in self.new.values()]),reverse=True)
+        self._branch_priority = {p : {name : branch for name, branch in self.new.items() if branch.priority == p} for p in p_set}
+        
+    def process_branches(self,verbose = False):
         self.set_branches()
                 
         for i, n_entry in enumerate(range(self.tree.GetEntries())):
@@ -250,28 +220,31 @@ class Tree(object):
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
             self.tree.GetEntry(n_entry)
             
-            # print(
-            #     '\n'
-            #     '======================================\n'
-            #     f'        EVENT {n_entry}\n'
-            #     '======================================'
-            # )
+            if verbose:
+                
+                print(
+                    '\n'
+                    '======================================\n'
+                    f'        EVENT {n_entry}\n'
+                    '======================================'
+                )
             
-            # print('\n Branch update')
+                print('\n Before Branch update')
             for p, branch_dict in self.branch_priority.items():
                 for branch_name, branch in branch_dict.items():
-                    # print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}')
+                    if verbose: print(branch)
 
                     branch()
             
-            # print('\n After Branch update')
-            # for branch_name, branch in self.new_branches.items():
-            #     print(f'{branch_name}: {branch.value} -> {getattr(self.tree,branch_name)}')
+            if verbose:
+                print('\n After Branch update')
+                for branch_name, branch in self.new.items():
+                    print(branch)
 
             
             
             self.tree.Fill()
-                    
+
         self.write()
         return
         
@@ -289,7 +262,12 @@ class Tree(object):
         self.file.Close()
     
     def set_branches(self):
-        self.tree.SetBranchStatus('*',1)
+        if not self.are_branches_set:
+            for branch in self.new.values():
+                branch.set_branches()
+        self.are_branches_set = True
+
+        self.activate_branches(self.tree)
         self.set_branch_priority()
         return
         for branch_name, branch_value in self.entry.items():            
@@ -298,16 +276,6 @@ class Tree(object):
             else:
                 self.tree.SetBranchAddress(branch_name, rt.AddressOf(branch_value))
     
-    def get_tree(self):
-        print(f'Abriendo archivo: {self.output_path}')
-        self._file = file = rt.TFile.Open(self.output_path)
-        self._tree = tree =  file.Get(self.tree_path)
-        
-        self.set_branches()
-        
-        if self.debug:
-            print(type(file), file)
-            print(type(tree), tree)
         
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
