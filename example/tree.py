@@ -15,7 +15,6 @@ t1 = Tree(
     files = files,
     branches = {
             'patmu_d0_pv'   : ROOT.VecOps.RVec('float')(),
-            'dsamu_d0_pv'   : ROOT.VecOps.RVec('float')(),
             'patmu_idx'     : ROOT.VecOps.RVec('int')(),
             'patmu_px'      : ROOT.VecOps.RVec('float')(),
             'patmu_py'      : ROOT.VecOps.RVec('float')()
