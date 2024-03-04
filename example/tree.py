@@ -15,13 +15,12 @@ t1 = Tree(
     files = files,
     branches = {
             'patmu_d0_pv'   : ROOT.VecOps.RVec('float')(),
-            'dsamu_d0_pv'   : ROOT.VecOps.RVec('float')(),
             'patmu_idx'     : ROOT.VecOps.RVec('int')(),
             'patmu_px'      : ROOT.VecOps.RVec('float')(),
             'patmu_py'      : ROOT.VecOps.RVec('float')()
         },
     debug = True,
-    # nentries = int(10),
+    nentries = int(10),
     debug_step = int(1e4),
     output_path='test',
     overwrite=True
@@ -73,5 +72,5 @@ t1.add_branch(
 )
 
 
-t1.process_branches(verbose=False) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués
+t1.process_branches(verbose=True) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués
 t1.close()

@@ -250,9 +250,12 @@ class Tree(object):
         
     
     def write(self):
-        print(f'Guardando cambios...')
-        self.is_written = True
-        self.file.Write()
+        if not self.is_written:
+            print(f'Guardando cambios...')
+            self.is_written = True
+            self.file.Write()
+        else:
+            print('File is already written!')
         return
     
     def close(self):
@@ -270,11 +273,6 @@ class Tree(object):
         self.activate_branches(self.tree)
         self.set_branch_priority()
         return
-        for branch_name, branch_value in self.entry.items():            
-            if branch_name in self.new_branches.keys():
-                continue
-            else:
-                self.tree.SetBranchAddress(branch_name, rt.AddressOf(branch_value))
     
         
 if __name__ == '__main__':
