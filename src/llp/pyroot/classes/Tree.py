@@ -6,6 +6,8 @@ import numpy as np
 import pdb
 
 from llp.utils.paths import data_directory, check_root_file
+from llp.pyroot.macros import selectionMask
+from torch import Value
 from .Branch import Branch, BranchCollection
 from copy import deepcopy
 import os, sys
@@ -25,7 +27,8 @@ class Tree(object):
         nentries = -1,
         debug_step = 10000,
         output_path = None,
-        overwrite = False
+        overwrite = False,
+        selection = None
     ):
         if not alias:
             self._alias = f't{self.active_trees}'
@@ -65,12 +68,14 @@ class Tree(object):
         self._tree = None
         
         
-        # TFile y TTree temporales para poder crear nuevas ramas
+        # TFile y TTree para poder crear nuevas ramas
         self._file = None
         self._tree = None
         
         self.load_files()
         
+        # Crear una seleccion
+        self.make_selection(selection)
         
         # branch_name : branch_def for branch_name, branch_def in branches.items()
                         
@@ -276,7 +281,19 @@ class Tree(object):
             else:
                 self.tree.SetBranchAddress(branch_name, rt.AddressOf(branch_value))
     
-        
+    @property
+    def selection(self):
+        if isinstance(self._selection, str): return selectionMask(str,self.tree)
+        elif self._selection is None: return rt.VecOps.RVecI((1))
+        elif self._selection is bool: return rt.VecOps.RVecI((self._selection))
+        else:
+            raise TypeError('Type of argument selection in class builder was set wrong:'
+                            f'expected str, bool or None; not {type(self._selection)}')        
+    
+    def make_selection(self,selection):
+        self._selection = selection
+    
+    
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
     from llp.utils.macros import load_macro

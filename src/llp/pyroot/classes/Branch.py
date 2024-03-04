@@ -45,13 +45,16 @@ class Branch(object):
     
     def __call__(self):
         if self.f:
+            result = self.f(self.tree,**self.kwargs)
             self.value.clear()  
             if not self.vector:
-                self.value.push_back(self.f(self.tree,**self.kwargs))
+                self.value.push_back(result)
             else:
                 # PyROOT RVec
                 
-                [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
+                self.value.resize(len(result))
+                for i,e in enumerate(result):
+                    self.value[i] = e
                 
                 # Python Array
                 # [self.value.pop() for e in range(len(self.value))]

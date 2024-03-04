@@ -8,7 +8,7 @@ using Vint = ROOT::VecOps::RVec<int>;
 
 
 
-Vint selectionCut(
+Vint selectionMask(
     char        *cutString,
     TTree       *tree
 ) {

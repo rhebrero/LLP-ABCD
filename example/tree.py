@@ -21,9 +21,9 @@ t1 = Tree(
             'patmu_py'      : ROOT.VecOps.RVec('float')()
         },
     debug = True,
-    # nentries = int(10),
-    debug_step = int(1e4),
-    output_path='test',
+    nentries = int(1e2),
+    debug_step = int(1e1),
+    output_path='test_1e2',
     overwrite=True
 )
 
