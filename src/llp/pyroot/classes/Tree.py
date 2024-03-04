@@ -283,7 +283,7 @@ class Tree(object):
     
     @property
     def selection(self):
-        if isinstance(self._selection, str): return selectionMask(str,self.tree)
+        if isinstance(self._selection, str): return selectionMask(self._selection,self.tree)
         elif self._selection is None: return rt.VecOps.RVecI((1))
         elif self._selection is bool: return rt.VecOps.RVecI((self._selection))
         else:

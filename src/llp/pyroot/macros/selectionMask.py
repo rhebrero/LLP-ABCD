@@ -7,7 +7,7 @@ def selectionMask(
         selection   : str           ,
         entry       : ROOT.TTree           
     ) -> 'ROOT.VecOps.RVecI':
-    return ROOT.pt(
+    return ROOT.selectionMask(
             selection,
             entry,
         )

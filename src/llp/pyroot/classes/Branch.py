@@ -25,9 +25,9 @@ class Branch(object):
         
         if fType:
             if self.vector:
-                self.fType = f'[{self.vector}]/{self.fType}'
+                self.fType = f'[{vector}]/{fType}'
             else:
-                self.fType = f'/{self.fType}'
+                self.fType = f'/{fType}'
         else:
             self.fType = None
         

@@ -41,7 +41,7 @@ t1.add_branch(
     mu_type = 'pat',
     default_value = ROOT.VecOps.RVec('float')(),
     vector = 'patmu_nMuons',
-    priority=1
+    priority=1,
 )
 
 t1.add_branch(
