@@ -250,12 +250,9 @@ class Tree(object):
         
     
     def write(self):
-        if not self.is_written:
-            print(f'Guardando cambios...')
-            self.is_written = True
-            self.file.Write()
-        else:
-            print('File is already written!')
+        print(f'Guardando cambios...')
+        self.is_written = True
+        self.file.Write()
         return
     
     def close(self):
@@ -272,8 +269,10 @@ class Tree(object):
 
         self.activate_branches(self.tree)
         self.set_branch_priority()
+        
+        for branch_name, branch_value in self.new.items():            
+            self.tree.SetBranchStatus(branch_name, 1)
         return
-    
         
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
@@ -328,5 +327,4 @@ if __name__ == '__main__':
 # selection.append('2')
 
 # selection = [' && '.join([selection_i,trigger]) for selection_i in selection]
-
 
