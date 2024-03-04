@@ -269,13 +269,10 @@ class Tree(object):
 
         self.activate_branches(self.tree)
         self.set_branch_priority()
+        
+        for branch_name, branch_value in self.new.items():            
+            self.tree.SetBranchStatus(branch_name, 1)
         return
-        for branch_name, branch_value in self.entry.items():            
-            if branch_name in self.new_branches.keys():
-                continue
-            else:
-                self.tree.SetBranchAddress(branch_name, rt.AddressOf(branch_value))
-    
         
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
@@ -330,5 +327,4 @@ if __name__ == '__main__':
 # selection.append('2')
 
 # selection = [' && '.join([selection_i,trigger]) for selection_i in selection]
-
 

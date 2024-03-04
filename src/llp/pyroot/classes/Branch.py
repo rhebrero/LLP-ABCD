@@ -95,6 +95,7 @@ class BranchCollection(Branch):
                 self.tree.Branch(name, self.values[name])
             
             self.tree.SetBranchAddress(name, self.values[name])
+            self.tree.SetBranchStatus(name, 1)
 
         return
     
