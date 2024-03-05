@@ -240,8 +240,6 @@ class Tree(object):
                 for branch_name, branch in self.new.items():
                     print(branch)
 
-            
-            
             self.tree.Fill()
 
         self.write()

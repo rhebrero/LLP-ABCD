@@ -24,6 +24,8 @@ Vint selectionMask(
                 passingMu.push_back(formula -> EvalInstance(i));
         }
 
+    delete formula;
+
     return passingMu;
 };
 
