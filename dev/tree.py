@@ -40,7 +40,7 @@ t1 = Tree(
             'trig_hlt_path' : ROOT.std.vector('string')(),
         },
     debug = True,
-    nentries = int(10),
+    # nentries = int(10),
     debug_step = int(1e4),
     output_path='test',
     overwrite=True
@@ -153,5 +153,5 @@ t1.add_branch(
 
 
 
-t1.process_branches(verbose=True) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués
+t1.process_branches(verbose=False) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués
 t1.close()

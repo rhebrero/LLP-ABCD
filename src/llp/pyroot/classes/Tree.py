@@ -7,7 +7,6 @@ import pdb
 
 from llp.utils.paths import data_directory, check_root_file
 from .Branch import Branch, BranchCollection
-from copy import deepcopy
 import os, sys
 
   
@@ -70,7 +69,6 @@ class Tree(object):
         self._tree = None
         
         self.load_files()
-        
         
         # branch_name : branch_def for branch_name, branch_def in branches.items()
                         
@@ -230,6 +228,7 @@ class Tree(object):
                 )
             
                 print('\n Before Branch update')
+            # Actualizamos los valores de cada branch según su prioridad
             for p, branch_dict in self.branch_priority.items():
                 for branch_name, branch in branch_dict.items():
                     if verbose: print(branch)
@@ -273,7 +272,10 @@ class Tree(object):
         for branch_name, branch_value in self.new.items():            
             self.tree.SetBranchStatus(branch_name, 1)
         return
-        
+            
+
+
+    
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
     from llp.utils.macros import load_macro
