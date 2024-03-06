@@ -33,16 +33,16 @@ t1 = Tree(
     'SimpleNTupler/DDTree',
     files = files,
     branches = {
-            'patmu_d0_pv'   : ROOT.VecOps.RVec('float')(),
-            'patmu_idx'     : ROOT.VecOps.RVec('int')(),
-            'patmu_px'      : ROOT.VecOps.RVec('float')(),
-            'patmu_py'      : ROOT.VecOps.RVec('float')(),
+            'patmu_d0_pv'   : ROOT.std.vector('float')(),
+            'patmu_idx'     : ROOT.std.vector('int')(),
+            'patmu_px'      : ROOT.std.vector('float')(),
+            'patmu_py'      : ROOT.std.vector('float')(),
             'trig_hlt_path' : ROOT.std.vector('string')(),
         },
     debug = True,
     # nentries = int(10),
     debug_step = int(1e4),
-    output_path='test',
+    output_path='new_production',
     overwrite=True
 )
 
@@ -55,7 +55,7 @@ t1.add_branch(
     'patmu_nMuons',
     nMuons,
     mu_type         = 'pat',
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
 
@@ -63,7 +63,7 @@ t1.add_branch(
     'patmu_pt',
     pt,
     mu_type         = 'pat',
-    default_value   = ROOT.VecOps.RVec('float')(),
+    default_value   = ROOT.std.vector('float')(),
     vector          = 'patmu_nMuons',
     priority        = priority,
 )
@@ -77,7 +77,7 @@ t1.add_branch(
     'patmu_isPrompt',
     selectionMask,
     cut             = prompt_cut,
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     vector          = 'patmu_nMuons',
     priority        = priority
 )
@@ -86,7 +86,7 @@ t1.add_branch(
     'mySelection',
     selectionMask,
     cut             = my_selection,
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     vector          = 'patmu_nMuons',
     priority        = priority
 )
@@ -101,7 +101,7 @@ t1.add_branch(
     'patmu_nPrompt',
     nPassing,
     branch          = 'patmu_isPrompt',
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
 
@@ -109,7 +109,7 @@ t1.add_branch(
     'patmu_isAnyPrompt',
     perEntry,
     branch          = 'patmu_isPrompt',
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
 
@@ -117,7 +117,7 @@ t1.add_branch(
     'mySelection_Any',
     perEntry,
     branch          = 'mySelection',
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
 # =======================
@@ -134,7 +134,7 @@ priority = -1
 t1.add_branch(
     'patmu_mu*_pt',
     getNHighest,
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     mu_type         = 'pat',
     branch          = 'pt',
     n               = 2,
@@ -144,7 +144,7 @@ t1.add_branch(
 t1.add_branch(
     'patmu_mu*_d0',
     getNHighest,
-    default_value   = ROOT.VecOps.RVec('int')(),
+    default_value   = ROOT.std.vector('int')(),
     mu_type         = 'pat',
     branch          = 'd0_pv',
     n               = 2,

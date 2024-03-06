@@ -36,6 +36,6 @@ def nPassing(
     if (cut is not None) & (branch is None):
         return ROOT.nPassing(entry,cut)
     elif (branch is not None) & (cut is None):
-        return ROOT.VecOps.Sum(getattr(entry,branch))
+        return sum(getattr(entry,branch))  
     else:
         raise RuntimeError("Both \"branch\" and \"cut\" can't be set.")
