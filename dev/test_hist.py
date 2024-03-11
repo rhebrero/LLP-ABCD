@@ -1,6 +1,46 @@
 import ROOT as rt
 import numpy as np
-file_rt = rt.TFile.Open('/nfs/cms/martialc/Displaced2024/llp/data/DiMuons_1PM_all.root')
+from llp.utils.macros import load_macro
+load_macro('invMass')
+load_macro('pt')
+
+
+file_path = '/nfs/cms/martialc/Displaced2024/llp/data/DiMuons_1PM_1e5.root'
+
+# branch = 'dim_mass'
+# nmu = 1
+branch = 'patmu_nPrompt'
+# output = f'patmu_pt__mu1L_d0_pv_idx'
+output = branch
+nbins = 10
+range = (0,10)
+
+
+data_triggers = [
+        'HLT_DoubleL2Mu23NoVtx_2Cha_v2',                    # Para Era B
+        'HLT_DoubleL2Mu23NoVtx_2Cha_v3',                    # para Era C
+        'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v2', # From aescalante@github/work/DDM/SimpleTTree/plots_example.py
+        'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v2'          # From aescalante@github/work/DDM/SimpleTTree/plots_example.py
+    ]
+triggers = '(trig_hlt_idx>=0) && ('+'||'.join([f'trig_hlt_path == \"{trigger}\"' for trigger in data_triggers])+')'
+
+
+selection_list = [
+    # triggers
+    'patmu_isAnyGood',
+    # '(dimPL_mass < 80) || (dimPL_mass > 110)'
+]
+
+
+
+
+
+
+# =============================================================================================================
+
+
+
+file_rt = rt.TFile.Open(file_path)
 tree_rt = file_rt.Get('SimpleNTupler/DDTree')
 
 files = [
@@ -12,32 +52,33 @@ tree_src = rt.TChain('SimpleNTupler/DDTree')
 [tree_src.Add(file) for file in files]
 
 tree_rt.AddFriend(tree_src)
+# mass = rt.TTreeFormula(
+#     'dim_mass_ClosestFurthest',
+#     'invMass(patmu_pt[patmu_mu1L_d0_pv],patmu_eta[patmu_mu1L_d0_pv],patmu_phi[patmu_mu1L_d0_pv],patmu_pt[patmu_mu1_d0_pv],patmu_eta[patmu_mu1_d0_pv],patmu_phi[patmu_mu1_d0_pv])',
+#     tree_rt
+# )
 
 
-branch = 'patmu_nMuons - patmu_nPrompt'
-selection_list = [
-    'mySelection == 1', # Triggers
-    'patmu_nPrompt > 0',
-    'patmu_nMuons >= 2',
-    'patmu_nMuonHits > 12',
-    # 'patmu_nMatchedStation > 1',
-    'patmu_pt > 10',
-    '(patmu_ptError/patmu_pt) < 1',
-    '(patmu_d0sig_pv/patmu_d0_pv) > 6'
-]
-nbins = 30
-range = (0,30)
+
+
+
+
 
 canvas = rt.TCanvas('c')
 canvas.SetLogy()
-hist = rt.TH1D('h',f'{branch} hist',nbins,*range)
-tree_rt.Draw(
-    f'{branch} >> h',
-    '(' + ') && ('.join(selection_list) + ')'
-)
+hist = rt.TH1D('h',f'{output} hist',nbins,*range)
+if len(selection_list) > 0:
+    tree_rt.Draw(
+        f'{branch} >> h',
+        '(' + ') && ('.join(selection_list) + ')'
+    )
+else:
+    tree_rt.Draw(f'{branch} >> h')
 print(hist.Integral())
 hist.Draw('SAMES',)
 
 # hist.GetXaxis().SetRangeUser(0,100)
 canvas.Draw()
-canvas.SaveAs(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/figs/{branch}.pdf')
+canvas.SaveAs(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/figs/{output}.pdf')
+canvas.SaveAs(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/figs/{output}.png')
+canvas.SaveAs(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/figs/current.pdf')

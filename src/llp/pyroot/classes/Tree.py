@@ -4,8 +4,9 @@ from collections.abc import Iterable
 from array import array
 import numpy as np
 import pdb
-
+from copy import deepcopy
 from llp.utils.paths import data_directory, check_root_file
+from torch import Value
 from .Branch import Branch, BranchCollection
 import os, sys
 
@@ -21,7 +22,7 @@ class Tree(object):
         files = [],
         alias = None,
         debug = False,
-        nentries = -1,
+        entries = 0,
         debug_step = 10000,
         output_path = None,
         overwrite = False
@@ -38,11 +39,28 @@ class Tree(object):
         self.overwrite = overwrite
         self.are_branches_set = False
         
+        self.src_branches = branches
         self.new_branches = {}
         self.new_collections = {}
-        self.entry = {}
+        self._branch_priority = None
+        self._min_entry = 0
+        self._max_entry = None
         
-        self.nentries = nentries
+        
+        
+        if isinstance(entries, int):
+            self._max_entry = entries-1
+            
+        elif isinstance(entries,Iterable):
+            try:
+                assert len(entries) == 2
+                self._min_entry, self._max_entry = entries
+            except AssertionError:
+                raise ValueError('"entries" iterable must have only 2 values, min entry and max entry')
+        else:
+            raise ValueError('"entries" must be int or iterable of length 2')
+        
+        
         self.debug_step = debug_step
         self.debug = debug
         
@@ -58,27 +76,24 @@ class Tree(object):
         else:
             self.output_path = output_path
         
-        self._branches  = branches
-        self._branch_priority = None
+        
+        
         self._tree_path = tree_path
-        self._tree = None
+        self._src_tree = None
+        self._new_file = None
+        self._new_tree = None
         
-        
-        # TFile y TTree temporales para poder crear nuevas ramas
-        self._file = None
-        self._tree = None
-        
+                
         self.load_files()
         
-        # branch_name : branch_def for branch_name, branch_def in branches.items()
                         
     
     def load_files(self):
         
-        src_tree = rt.TChain(self.tree_path)
+        self._src_tree = src_tree = rt.TChain(self.tree_path)
         for i, file_path in enumerate(self.files):
             if self.debug: print(f'Adding file {file_path}...')
-            src_tree.Add(file_path, self.nentries)
+            src_tree.Add(file_path)
         
         
         output_path = check_root_file(self.output_path)
@@ -91,38 +106,63 @@ class Tree(object):
         
         
         # Antes de clonar, tenemos que crear el archivo root al que va a estar ligado el TTree.
-        self._file = file = rt.TFile(str(output_path),"RECREATE")
+        self._new_file = new_file = rt.TFile(str(output_path),"RECREATE")
         
         # Hay que recrear la estructura del archivo original
         for folder in self.tree_path.split('/')[:-1]:
-            file.mkdir(folder)
-            file.cd(folder)
-            
-        self.activate_branches(src_tree, verbose = False)
-        self._tree = tree = src_tree.CloneTree(self.nentries,'fast')
+            new_file.mkdir(folder)
+            new_file.cd(folder)
         
-        self.activate_branches(tree)
-        del src_tree
+        
+        if self.nentries == 0: self.max_entry = src_tree.GetEntries()-1
+        
+        self.activate_branches(src_tree, self.src_branches, verbose = False)
+        self._new_tree = new_tree = src_tree.CloneTree(0)
+        
+        self.new_tree.AddFriend(self.src_tree)
+        
+        self.activate_branches(new_tree, self.total_branches)
+        
             
-    def activate_branches(self, tree, verbose = True):
+    def activate_branches(self, tree, branches, verbose = True):
         tree.SetBranchStatus('*',0)
+        
         if self.debug & verbose:
             print("Activating branches:")
-            [print(f" - {branch}") for branch in self.branch_names]
-        if isinstance(self.branches,dict):
-            [tree.SetBranchStatus(branch,1) for branch in self.branch_names]
-        else:
-            raise TypeError(f'Type of "branches" is not valid: type is {type(self.branches)} and dict(str : Rtype) was expected.')
-        return       
+            [print(f" - {branch}") for branch in branches.keys()]
+            
+        [tree.SetBranchStatus(branch,1) for branch in branches.keys()]
         
+        return       
+    
     
     @property
-    def new(self):
+    def nentries(self):
+        return self.max_entry - self.min_entry + 1 # +1 porque el 0 cuenta también
+    
+    @property
+    def max_entry(self):
+        return self._max_entry
+    
+    @property
+    def min_entry(self):
+        return self._min_entry
+    
+    @property
+    def src_tree(self):
+        return self._src_tree  
+    
+    @property
+    def total_new_branches(self):
         return self.new_branches | self.new_collections
     
     @property
+    def total_branches(self):
+        return self.total_new_branches | self.src_branches
+    
+    @property
     def branches(self):
-        return self._branches
+        return self._src_branches
     
     @property
     def tree_path(self) -> str:
@@ -145,8 +185,9 @@ class Tree(object):
         Tree.known_alias.add(new_alias)
     
     @property
-    def tree(self):
-        return self._tree
+    def new_tree(self):
+        return self._new_tree
+
     
     @property
     def files(self):
@@ -154,7 +195,7 @@ class Tree(object):
     
     @property
     def file(self):
-        return self._file
+        return self._new_file
     
     @property
     def branch_names(self):
@@ -181,7 +222,7 @@ class Tree(object):
     ):
         if "*" not in branch_name:
             self.new_branches[branch_name] = Branch(
-                                                self.tree                   ,
+                                                self.new_tree                   ,
                                                 branch_name                 ,
                                                 value       = default_value ,
                                                 fType       = fType         ,
@@ -191,7 +232,7 @@ class Tree(object):
                                             )
         else:
             self.new_collections[branch_name] = BranchCollection(
-                                                self.tree                   ,
+                                                self.new_tree                   ,
                                                 branch_name                 ,
                                                 n           = n             ,
                                                 value       = default_value ,
@@ -207,16 +248,38 @@ class Tree(object):
     
     def set_branch_priority(self):
         
-        p_set = sorted(set([branch.priority for branch in self.new.values()]),reverse=True)
-        self._branch_priority = {p : {name : branch for name, branch in self.new.items() if branch.priority == p} for p in p_set}
+        p_set = sorted(set([branch.priority for branch in self.total_new_branches.values()]),reverse=True)
+        self._branch_priority = {p : {name : branch for name, branch in self.total_new_branches.items() if branch.priority == p} for p in p_set}
+    
+    def get_entry(self,n_entry):
+        self.src_tree.GetEntry(n_entry)
+        if self.new_tree: self.new_tree.GetEntry(n_entry)
+    
+    def print_entry(self,n_entry):
+        self.get_entry(n_entry)
         
+        for branch_name, branch in self.total_branches:
+            if isinstance(branch,BranchCollection):
+                for branch_name_i, branch_i in branch.values:
+                    print(f' - {branch_name_i}: {branch_i.value}')
+            else:
+                print(f' - {branch_name}: {branch.value}')
+    
+    
+    
+    
+    
+    
     def process_branches(self,verbose = False):
         self.set_branches()
-                
-        for i, n_entry in enumerate(range(self.tree.GetEntries())):
+        
+        for i, n_entry in enumerate(range(self.min_entry,self.max_entry+1)):
             
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
-            self.tree.GetEntry(n_entry)
+            self.new_tree.GetEntry(n_entry)
+            self.src_tree.GetEntry(n_entry)
+            
+            # for branch_name in self.
             
             if verbose:
                 
@@ -232,15 +295,16 @@ class Tree(object):
             for p, branch_dict in self.branch_priority.items():
                 for branch_name, branch in branch_dict.items():
                     if verbose: print(branch)
-
                     branch()
+            
             
             if verbose:
                 print('\n After Branch update')
-                for branch_name, branch in self.new.items():
+                for branch_name, branch in self.total_new_branches.items():
                     print(branch)
+                print(f'patmu_d0_pv: {self.new_tree.patmu_d0_pv}')
 
-            self.tree.Fill()
+            self.new_tree.Fill()
 
         self.write()
         return
@@ -249,26 +313,30 @@ class Tree(object):
     def write(self):
         print(f'Guardando cambios...')
         self.is_written = True
-        self.file.Write()
+        self.new_tree.Write()
         return
     
     def close(self):
         print(f'Cerrando archivo: {self.output_path}')
-        if not self.is_written: self.write()
-        
+        # if not self.is_written: self.write()
+        # self.new_tree.Close()
         self.file.Close()
     
     def set_branches(self):
+        
         if not self.are_branches_set:
-            for branch in self.new.values():
+            for branch in self.total_new_branches.values():
                 branch.set_branches()
         self.are_branches_set = True
 
-        self.activate_branches(self.tree)
         self.set_branch_priority()
+        # self.activate_branches(self.new_tree)
         
-        for branch_name, branch_value in self.new.items():            
-            self.tree.SetBranchStatus(branch_name, 1)
+        # for branch_name, branch_value in self.branches.items():
+        #     self.src_tree.SetBranchStatus(branch_name, 1)
+        
+        # for branch_name, branch_value in self.new.items():            
+        #     self.new_tree.SetBranchStatus(branch_name, 1)
         return
             
 

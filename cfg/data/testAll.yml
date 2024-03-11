@@ -1,7 +1,0 @@
-test-all:
-  type:   join
-  path:
-    - testData
-    - testSim
-  isroot: false
-  join:   True

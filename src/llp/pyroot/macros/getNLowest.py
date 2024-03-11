@@ -1,9 +1,9 @@
 from llp.utils import load_macro
 import ROOT
-load_macro('getNHighest')
+load_macro('getNLowest')
 
 
-def getNHighest(
+def getNLowest(
         entry   : ROOT.TTree            ,
         branch  : str                   ,
         mu_type : str           = 'pat' ,
@@ -12,13 +12,13 @@ def getNHighest(
         do_abs  : bool          = True  ,
     ) -> int:
     if mu_idx is None:
-        return ROOT.getNHighest(
+        return ROOT.getNLowest(
                 getattr(entry, f'{mu_type}mu_{branch}'),
                 n,
                 do_abs
             )
     else:
-        return ROOT.getNHighest_fromIdx(
+        return ROOT.getNLowest_fromIdx(
                 getattr(entry, f'{mu_type}mu_{branch}'),
                 getattr(entry, mu_idx),
                 n,

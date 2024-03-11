@@ -10,13 +10,13 @@ using Vint = ROOT::VecOps::RVec<int>;
 
 Vint selectionMask(
     TTree       *tree,
-    char        *cutString
+    char        *cutString,
+    int muSize
 ) {
 
     // Inicializamos las variables 
         TTreeFormula* formula = new TTreeFormula("selection",cutString,tree);
         Vint passingMu;
-        unsigned int muSize = formula -> GetNdata();
 
 
     // Almacenamos el valor lógico de cada uno
@@ -32,9 +32,10 @@ Vint selectionMask(
 Vint selectionIdxFromMask(
     Vint  passingMu
 ) {
+    int muSize = passingMu.size();
 
     // Miramos si pasan el corte
-        for (unsigned int i=0; i < passingMu.size(); ++i) {
+        for (auto i=0; i < muSize; ++i) {
             if ( passingMu[i] == 0 ) {
                 //No hagas nada si no pasa el corte
             }else{
@@ -51,11 +52,12 @@ Vint selectionIdxFromMask(
 
 Vint selectionIdxFromCut(
     TTree       *tree,
-    char        *cutString
+    char        *cutString,
+    int muSize
 ) {
 
     // Inicializamos las variables 
-        Vint passingMu  = selectionMask(tree,cutString);
+        Vint passingMu  = selectionMask(tree,cutString,muSize);
         Vint passingIdx = selectionIdxFromMask(passingMu);
     
     return passingIdx;
@@ -64,9 +66,10 @@ Vint selectionIdxFromCut(
 
 int nPassing( 
     TTree       *tree,
-    char        *cutString
+    char        *cutString,
+    int muSize
 ) {
     // Cantidad de muones que pasan el corte
-        int nPrompt = selectionMask(tree, cutString).size();
+        int nPrompt = selectionMask(tree, cutString, muSize).size();
     return nPrompt;
 };

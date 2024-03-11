@@ -7,7 +7,8 @@ using Vfloat = ROOT::VecOps::RVec<float>;
 // #include <vector>
 
 
-Vint getNHighest_fromIdx(
+
+Vint getNLowest_fromIdx(
     Vfloat  mu_values,
     Vint    mu_idx,
     int     NHighest,
@@ -22,7 +23,7 @@ Vint getNHighest_fromIdx(
         }
 
 
-        Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return 1/x < 1/y;});
+        Vfloat sortedValues = Sort(selectedValues);
         Vint passingMu;
 
 
@@ -44,9 +45,7 @@ Vint getNHighest_fromIdx(
     return passingMu;
 };
 
-
-
-Vint getNHighest(
+Vint getNLowest(
     Vfloat  mu_values,
     int     NHighest,
     bool    doAbs
@@ -57,7 +56,10 @@ Vint getNHighest(
         for (auto i=0; i< mu_values.size();++i) {mu_idx.push_back(i);};
     
     // Evaluamos
-        Vint passingMu = getNHighest_fromIdx(mu_values,mu_idx,NHighest,doAbs);
+        Vint passingMu = getNLowest_fromIdx(mu_values,mu_idx,NHighest,doAbs);
         return passingMu;
+        
+    
 
+    return passingMu;
 };

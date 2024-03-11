@@ -10,6 +10,7 @@ class Hist(object):
             'data'  :   'hist',
             'sim'   :   'SAMES'
         }
+    
     def __init__(
         self,
         branch,

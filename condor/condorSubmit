@@ -1,0 +1,117 @@
+executable             = condorExecutable.sh
++CieRunInAF            = True
++CieSingularityImage   = cc7
+output                 = logs/run4/dummy_job_0.out
+log                    = logs/run4/dummy_job_0.log
+error                  = logs/run4/dummy_job_0.err
+arguments              = python3 test.py -s Success!! -f output/test1.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_1.out
+log                    = logs/run4/dummy_job_1.log
+error                  = logs/run4/dummy_job_1.err
+arguments              = python3 test.py -s Success!! -f output/test2.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_2.out
+log                    = logs/run4/dummy_job_2.log
+error                  = logs/run4/dummy_job_2.err
+arguments              = python3 test.py -s Success!! -f output/test3.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_3.out
+log                    = logs/run4/dummy_job_3.log
+error                  = logs/run4/dummy_job_3.err
+arguments              = python3 test.py -s Success!! -f output/test4.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_4.out
+log                    = logs/run4/dummy_job_4.log
+error                  = logs/run4/dummy_job_4.err
+arguments              = python3 test.py -s Success!! -f output/test5.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_5.out
+log                    = logs/run4/dummy_job_5.log
+error                  = logs/run4/dummy_job_5.err
+arguments              = python3 test.py -s Success!! -f output/test6.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_6.out
+log                    = logs/run4/dummy_job_6.log
+error                  = logs/run4/dummy_job_6.err
+arguments              = python3 test.py -s Success!! -f output/test7.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_7.out
+log                    = logs/run4/dummy_job_7.log
+error                  = logs/run4/dummy_job_7.err
+arguments              = python3 test.py -s Success!! -f output/test8.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_8.out
+log                    = logs/run4/dummy_job_8.log
+error                  = logs/run4/dummy_job_8.err
+arguments              = python3 test.py -s Success!! -f output/test9.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_9.out
+log                    = logs/run4/dummy_job_9.log
+error                  = logs/run4/dummy_job_9.err
+arguments              = python3 test.py -s Success!! -f output/test10.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_10.out
+log                    = logs/run4/dummy_job_10.log
+error                  = logs/run4/dummy_job_10.err
+arguments              = python3 test.py -s Success!! -f output/test11.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_11.out
+log                    = logs/run4/dummy_job_11.log
+error                  = logs/run4/dummy_job_11.err
+arguments              = python3 test.py -s Success!! -f output/test12.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_12.out
+log                    = logs/run4/dummy_job_12.log
+error                  = logs/run4/dummy_job_12.err
+arguments              = python3 test.py -s Success!! -f output/test13.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_13.out
+log                    = logs/run4/dummy_job_13.log
+error                  = logs/run4/dummy_job_13.err
+arguments              = python3 test.py -s Success!! -f output/test14.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_14.out
+log                    = logs/run4/dummy_job_14.log
+error                  = logs/run4/dummy_job_14.err
+arguments              = python3 test.py -s Success!! -f output/test15.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_15.out
+log                    = logs/run4/dummy_job_15.log
+error                  = logs/run4/dummy_job_15.err
+arguments              = python3 test.py -s Success!! -f output/test16.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_16.out
+log                    = logs/run4/dummy_job_16.log
+error                  = logs/run4/dummy_job_16.err
+arguments              = python3 test.py -s Success!! -f output/test17.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_17.out
+log                    = logs/run4/dummy_job_17.log
+error                  = logs/run4/dummy_job_17.err
+arguments              = python3 test.py -s Success!! -f output/test18.txt
+#
+queue 1
+output                 = logs/run4/dummy_job_18.out
+log                    = logs/run4/dummy_job_18.log
+error                  = logs/run4/dummy_job_18.err
+arguments              = python3 test.py -s Success!! -f output/test19.txt
+#
+queue 1

@@ -142,12 +142,24 @@ t1.add_branch(
 )
 
 t1.add_branch(
+    'patmu_mu*L_d0',
+    getNLowest,
+    default_value   = ROOT.VecOps.RVec('int')(),
+    mu_type         = 'pat',
+    branch          = 'd0_pv',
+    n               = 1,
+    do_abs          = True,
+    priority        = priority
+)
+
+t1.add_branch(
     'patmu_mu*_d0',
     getNHighest,
     default_value   = ROOT.VecOps.RVec('int')(),
     mu_type         = 'pat',
     branch          = 'd0_pv',
-    n               = 2,
+    n               = 1,
+    do_abs          = True,
     priority        = priority
 )
 
