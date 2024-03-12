@@ -5,6 +5,9 @@ load_macro('nMuons')
 
 def nMuons(
         entry   : ROOT.TTree            ,
-        mu_type : str           = 'pat'
+        branch  : str           = 'patmu'
     ) -> int:
-    return ROOT.nMuons(getattr(entry, f'{mu_type}mu_idx'))
+    """
+    Returns the length of "{branch}_idx", 'patmu_idx' by default.
+    """
+    return ROOT.nMuons(getattr(entry, f'{branch}_idx'))

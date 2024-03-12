@@ -7,29 +7,29 @@ using Vfloat = ROOT::VecOps::RVec<float>;
 // #include <vector>
 
 
-Vint getNHighest_fromIdx(
+Vint sortBy_fromIdx(
     Vfloat  mu_values,
     Vint    mu_idx,
-    int     NHighest,
     bool    doAbs
 ) {
 
     // Inicializamos las variables
         Vfloat selectedValues;
         for (auto jMu : mu_idx) {selectedValues.push_back(mu_values[jMu]);}
-        
+
     // En caso de quere usar el valor absoluto para comparar
         if (doAbs) {
             Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return abs(1/x) < abs(1/y);});
         } else {
             Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return 1/x < 1/y;});
         }
+
         
         Vint passingMu;
-
+        unsigned int nMuons = mu_idx.size()
 
     // Miramos si pasan el corte
-        for (auto iHighest=0; iHighest < NHighest; ++iHighest) {
+        for (auto iHighest=0; iHighest < nMuons; ++iHighest) {
 
             for (auto jMu = 0; jMu < selectedValues.size(); ++jMu) {
                 if ( sortedValues[iHighest] == selectedValues[jMu] ) {
@@ -48,9 +48,8 @@ Vint getNHighest_fromIdx(
 
 
 
-Vint getNHighest(
+Vint sortBy(
     Vfloat  mu_values,
-    int     NHighest,
     bool    doAbs
 ) {
 
@@ -59,15 +58,14 @@ Vint getNHighest(
         for (auto i=0; i< mu_values.size();++i) {mu_idx.push_back(i);};
     
     // Evaluamos
-        Vint passingMu = getNHighest_fromIdx(mu_values,mu_idx,NHighest,doAbs);
+        Vint passingMu = sortBy_fromIdx(mu_values,mu_idx,doAbs);
         return passingMu;
 
 };
 
-Vint getNHighest_fromMask(
+Vint sortBy_fromMask(
     Vfloat  mu_values,
-    Vint    mask
-    int     NHighest,
+    Vint    mask,
     bool    doAbs
 ) {
 
@@ -76,7 +74,7 @@ Vint getNHighest_fromMask(
         for (auto i=0; i< mu_values.size();++i) {if (mask[i] == 1) {mu_idx.push_back(i);}};
     
     // Evaluamos
-        Vint passingMu = getNHighest_fromIdx(mu_values,mu_idx,NHighest,doAbs);
+        Vint passingMu = sortBy_fromIdx(mu_values,mu_idx,doAbs);
         return passingMu;
 
 };

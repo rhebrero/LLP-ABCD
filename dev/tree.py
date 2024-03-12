@@ -29,7 +29,7 @@ filters = [
         # trigger,
         'patmu_nMatchedStations > 1',
         'patmu_nTrackerLayers > 5',
-        'patmu_pt > 10', # Se carga muchos muones
+        'patmu_pt > 5',
         '(patmu_ptError/patmu_pt) < 1',
         # 'patmu_d0sig_pv > 6',
     ]
@@ -97,7 +97,7 @@ priority = 3
 t1.add_branch(
     'patmu_nMuons',
     nMuons,
-    mu_type         = 'pat',
+    branch          = 'patmu',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
@@ -105,7 +105,7 @@ t1.add_branch(
 t1.add_branch(
     'patmu_pt',
     pt,
-    mu_type         = 'pat',
+    mu_type         = 'patmu',
     default_value   = ROOT.std.vector('float')(),
     vector          = 'patmu_nMuons',
     priority        = priority,
@@ -114,22 +114,11 @@ t1.add_branch(
 # =======================
 # PRIORIDAD 2
 # =======================
-
 priority = 2
-t1.add_branch(
-    'patmu_isPrompt',
-    selectionMask,
-    n_muons         = 'patmu_nMuons',
-    cut             = prompt_cut,
-    default_value   = ROOT.std.vector('int')(),
-    vector          = 'patmu_nMuons',
-    priority        = priority,
-)
-
 t1.add_branch(
     'patmu_isGood',
     selectionMask,
-    n_muons         = 'patmu_nMuons',
+    branch          = 'patmu',
     cut             = my_selection,
     default_value   = ROOT.std.vector('int')(),
     vector          = 'patmu_nMuons',
@@ -140,29 +129,21 @@ t1.add_branch(
 # =======================
 # PRIORIDAD 1
 # =======================
-
 priority = 1
 t1.add_branch(
-    'patmu_nPrompt',
+    'patmu_isPrompt',
+    selectionMask,
+    branch          = 'patmu',
+    cut             = prompt_cut,
+    default_value   = ROOT.std.vector('int')(),
+    vector          = 'patmu_nMuons',
+    priority        = priority,
+)
+t1.add_branch(
+    'patmu_nGood',
     nPassing,
-    branch          = 'patmu_isPrompt',
-    n_muons         = 'patmu_nMuons',
-    default_value   = ROOT.std.vector('int')(),
-    priority        = priority
-)
-
-t1.add_branch(
-    'patmu_isAnyPrompt',
-    perEntry,
-    branch          = 'patmu_isPrompt',
-    default_value   = ROOT.std.vector('int')(),
-    priority        = priority
-)
-
-t1.add_branch(
-    'patmu_isAnyGood',
-    perEntry,
-    branch          = 'patmu_isGood',
+    branch          = 'patmu',
+    selection       = 'isGood',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
@@ -171,17 +152,23 @@ t1.add_branch(
 # =======================
 priority = 0
 t1.add_branch(
-    'patmu_isGood_idx',
+    'patmu_nPrompt',
+    nPassing,
+    branch          = 'patmu',
+    selection       = 'isPrompt',
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority
+)
+t1.add_branch('patmu_isGood_idx',
     selectionIdx,
-    n_muons         = 'patmu_nMuons',
-    branch          = 'patmu_isGood',
+    branch          = 'patmu',
+    selection       = 'isGood',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority,
     vector          = True
 )
 
-t1.add_branch(
-    'patmu_isPrompt_idx',
+t1.add_branch('patmu_isPrompt_idx',
     selectionIdx,
     n_muons         = 'patmu_nMuons',
     branch          = 'patmu_isPrompt',
@@ -195,8 +182,7 @@ t1.add_branch(
 # =======================
 
 priority = -1
-t1.add_branch(
-    'patmu_mu*_pt_idx',
+t1.add_branch('patmu_mu*_pt_idx',
     getNHighest,
     default_value   = ROOT.std.vector('int')(),
     mu_type         = 'pat',

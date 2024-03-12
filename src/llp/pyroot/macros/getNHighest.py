@@ -4,23 +4,22 @@ load_macro('getNHighest')
 
 
 def getNHighest(
-        entry   : ROOT.TTree            ,
-        branch  : str                   ,
-        mu_type : str           = 'pat' ,
-        mu_idx  : str           = None  ,
-        n       : int           = 2     ,
-        do_abs  : bool          = True  ,
+        entry       : ROOT.TTree            ,
+        branch      : str                   ,
+        selection   : str           = None  ,
+        n           : int           = 2     ,
+        do_abs      : bool          = True  ,
     ) -> int:
-    if mu_idx is None:
+    if selection is None:
         return ROOT.getNHighest(
-                getattr(entry, f'{mu_type}mu_{branch}'),
+                getattr(entry, branch),
                 n,
                 do_abs
             )
     else:
         return ROOT.getNHighest_fromIdx(
-                getattr(entry, f'{mu_type}mu_{branch}'),
-                getattr(entry, mu_idx),
+                getattr(entry, branch),
+                getattr(entry, idx),
                 n,
                 do_abs
             )

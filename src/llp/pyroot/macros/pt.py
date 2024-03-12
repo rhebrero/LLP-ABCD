@@ -5,9 +5,12 @@ load_macro('pt')
 
 def pt(
         entry   : ROOT.TTree           ,
-        mu_type : str           = 'pat'
+        branch  : str           = 'patmu'
     ) -> 'ROOT.VecOps.RVecF':
+    """
+    Returns the pt value calculated using branches "{branch}_px" and "{branch}_py".
+    """
     return ROOT.pt(
-            getattr(entry, f'{mu_type}mu_px'),
-            getattr(entry, f'{mu_type}mu_py'),
+            getattr(entry, f'{branch}_px'),
+            getattr(entry, f'{branch}_py'),
         )

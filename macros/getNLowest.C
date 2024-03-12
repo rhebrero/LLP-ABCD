@@ -18,8 +18,11 @@ Vint getNLowest_fromIdx(
     // Inicializamos las variables
         Vfloat selectedValues;
         for (auto jMu : mu_idx) {selectedValues.push_back(mu_values[jMu]);}
+    // En caso de quere usar el valor absoluto para comparar
         if (doAbs) {
-            selectedValues = abs(selectedValues);
+            Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return abs(x) < abs(y);});
+        } else {
+            Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return x < y;});
         }
 
 
