@@ -1,6 +1,7 @@
 import ROOT as rt
 import pathlib, inspect
 from collections.abc import Iterable
+from numbers import Number
 from array import array
 import numpy as np
 import pdb
@@ -48,13 +49,13 @@ class Tree(object):
         
         
         
-        if isinstance(entries, int):
-            self._max_entry = entries-1
+        if isinstance(entries, Number):
+            self._max_entry = int(entries-1)
             
         elif isinstance(entries,Iterable):
             try:
                 assert len(entries) == 2
-                self._min_entry, self._max_entry = entries
+                self._min_entry, self._max_entry = [int(entry) for entry in entries]
             except AssertionError:
                 raise ValueError('"entries" iterable must have only 2 values, min entry and max entry')
         else:

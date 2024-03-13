@@ -13,19 +13,23 @@ Vint getNHighest_fromIdx(
     int     NHighest,
     bool    doAbs
 ) {
-
-    // Inicializamos las variables
+    // Initialize variables
         Vfloat selectedValues;
+        Vfloat sortedValues;
+        Vint passingMu;
+
+    if (mu_idx.size() == 0) {return passingMu;} // In case no muon to select
+    
+    // Inicializamos las variables
         for (auto jMu : mu_idx) {selectedValues.push_back(mu_values[jMu]);}
         
     // En caso de quere usar el valor absoluto para comparar
         if (doAbs) {
-            Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return abs(1/x) < abs(1/y);});
+            sortedValues = Sort(selectedValues, [](double x, double y) {return abs(1/x) < abs(1/y);});
         } else {
-            Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return 1/x < 1/y;});
+            sortedValues = Sort(selectedValues, [](double x, double y) {return 1/x < 1/y;});
         }
         
-        Vint passingMu;
 
 
     // Miramos si pasan el corte
@@ -66,7 +70,7 @@ Vint getNHighest(
 
 Vint getNHighest_fromMask(
     Vfloat  mu_values,
-    Vint    mask
+    Vint    mask,
     int     NHighest,
     bool    doAbs
 ) {
@@ -78,5 +82,23 @@ Vint getNHighest_fromMask(
     // Evaluamos
         Vint passingMu = getNHighest_fromIdx(mu_values,mu_idx,NHighest,doAbs);
         return passingMu;
+
+};
+
+Vint getNHighest_fromBranch(
+    Vint    mu_idx,
+    int     NHighest
+) {
+
+    // Creamos un vector de índices
+        Vint mu_selectedIdx;
+        if (mu_idx.size() == 0) {
+            for (auto i=0; i< NHighest;++i) {mu_selectedIdx.push_back(-999);};// In case no muon to select
+
+        } else {
+            for (auto i=0; i< NHighest;++i) {mu_selectedIdx.push_back(mu_idx[i]);};
+        }
+        
+        return mu_selectedIdx;
 
 };

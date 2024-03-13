@@ -50,9 +50,11 @@ class Branch(object):
                 self.value.push_back(self.f(self.tree,**self.kwargs))
             else:
                 # PyROOT RVec
-                
-                [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
-                
+                try:
+                    [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
+                except Exception as e:
+                    print(self.name,self.value,self.f)
+                    raise e
                 # Python Array
                 # [self.value.pop() for e in range(len(self.value))]
                 # self.value.append(result[0])

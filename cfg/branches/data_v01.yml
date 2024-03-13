@@ -12,9 +12,9 @@ patmu_nMuons:
 patmu_pt:
   f             : pt
   branch        : patmu
+  vector        : True
   type          : float
   priority      : 3
-  vector        : True
   dependencies:
     - patmu_px
     - patmu_py
@@ -28,9 +28,9 @@ patmu_isGood:
   branch      : patmu
   cut         : isGood_v01 # dependencies are in selection config
   per_muon    : True
+  vector      : True
   type        : int
   priority    : 2
-  vector      : True
 
 
 # ========================================
@@ -41,18 +41,18 @@ patmu_isPrompt:
   branch      : patmu
   cut         : isPrompt_v01 # dependencies are in selection config
   per_muon    : True
+  vector      : True
   type        : int
   priority    : 2
-  vector      : True
 
 patmu_isDisplaced:
   f           : selectionMask
   branch      : patmu
   cut         : isDisplaced_v01 # dependencies are in selection config
   per_muon    : True
+  vector      : True
   type        : int
   priority    : 2
-  vector      : True
 
 patmu_nGood:
   f           : nPassing
@@ -65,8 +65,8 @@ patmu_isGood_idx:
   f           : selectionIdx
   branch      : patmu
   selection   : isGood
-  type        : int
   vector      : True
+  type        : int
   priority    : 0
 
 
@@ -84,8 +84,8 @@ patmu_isPrompt_idx:
   f           : selectionIdx
   branch      : patmu
   selection   : isPrompt
-  type        : int
   vector      : True
+  type        : int
   priority    : 0
 
 patmu_nDisplaced:
@@ -98,18 +98,43 @@ patmu_isDisplaced_idx:
   f           : selectionIdx
   branch      : patmu
   selection   : isDisplaced
-  type        : int
   vector      : True
+  type        : int
   priority    : 0
 
+patmu_d0_pv_idx:
+  f           : sortBy
+  branch      : patmu_d0_pv
+  selection   : patmu_isGood
+  vector      : True
+  type        : int
+  priority    : 0
 
 # ========================================
 # PRIORITY -1
 # ========================================
-patmu_d0_pv_idx:
-  f           : sortBy
-  branch      : patmu_d0_pv
-  selection   : isDisplaced
+patmu_mu*_d0_pv_idx:
+  f           : getNHighest
+  n           : 1
+  idx         : patmu_d0_pv_idx
   type        : int
-  vector      : True
-  priority    : 0
+  priority    : -1
+
+patmu_mu*L_d0_pv_idx:
+  f           : getNLowest
+  n           : 1
+  idx         : patmu_d0_pv_idx
+  type        : int
+  priority    : -1
+
+
+# ========================================
+# PRIORITY -2
+# ========================================
+patmu_mu*L_d0_pv_idx:
+  f           : invMass_MuMu
+  branch      : patmu
+  mu_idx1     : patmu_mu1_d0_pv_idx
+  mu_idx2     : patmu_mu1L_d0_pv_idx
+  type        : double
+  priority    : -2

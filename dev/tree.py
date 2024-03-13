@@ -4,7 +4,6 @@ import ROOT
 from array import array
 entries = -1
 
-prompt_cut   = 'abs(patmu_d0_pv) < 0.1'
 verbose = False
 
 data_triggers = [
@@ -23,18 +22,32 @@ sim_triggers = [
 ]
 
 triggers = sim_triggers
-trigger = '(trig_hlt_idx.size() > 0) && ('+'||'.join([f'trig_hlt_path == \"{trigger}\"' for trigger in triggers])+')'
+trigger = '('+'||'.join([f'trig_hlt_path == \"{trigger}\"' for trigger in triggers])+')'
 
-filters = [
-        # trigger,
+selection_good = [
+        trigger,
         'patmu_nMatchedStations > 1',
         'patmu_nTrackerLayers > 5',
         'patmu_pt > 5',
         '(patmu_ptError/patmu_pt) < 1',
-        # 'patmu_d0sig_pv > 6',
     ]
 
-my_selection = '(' + ') && ('.join(filters) + ')'
+selection_prompt = [
+        trigger,
+        '((patmu_d0_pv    <= 0.1) && (patmu_d0sig_pv > 1.2)) || (patmu_d0sig_pv <= 1.2)'
+        # Que esté muy cerca o que no se pueda resolver.
+    ]
+
+selection_displaced = [
+        trigger,
+        'patmu_d0_pv > 0.1',
+        'patmu_d0sig_pv > 6'
+    ]
+
+is_good         = '(' + ') && ('.join(  selection_good        ) + ')'
+is_prompt       = '(' + ') && ('.join(  selection_prompt      ) + ')'
+is_displaced    = '(' + ') && ('.join(  selection_displaced   ) + ')'
+
 # print(my_selection)
 
 
@@ -42,21 +55,21 @@ my_selection = '(' + ') && ('.join(filters) + ')'
 
 
 
-# files = [
-#     '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022B-ReReco-v2.root',
-#     '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022C-ReReco-v2.root'
-# ]
-
-# tree_path = 'SimpleNTupler/DDTree'
-# output_path = 'DiMuons_1PM_1e5'
-# nentries = 1e5
-
-
 files = [
-    '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedLeptons/testProduction_March2024/merged_files/ntuple_2022_SMuon_500_10.root'
+    '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022B-ReReco-v2.root',
+    '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022C-ReReco-v2.root'
 ]
-tree_path = 'SimpleMiniNTupler/DDTree'
-output_path = 'STop_500_10_1PM'
+
+tree_path = 'SimpleNTupler/DDTree'
+output_path = 'DiMuons_1PM_1e5'
+output_path = 'test'
+
+
+# files = [
+#     '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedLeptons/testProduction_March2024/merged_files/ntuple_2022_SMuon_500_10.root'
+# ]
+# tree_path = 'SimpleMiniNTupler/DDTree'
+# output_path = 'STop_500_10_1PM'
 
 entries = 10
 debug_step = 1e3
@@ -94,20 +107,18 @@ t1 = Tree(
 # =======================
 
 priority = 3
-t1.add_branch(
-    'patmu_nMuons',
+t1.add_branch('patmu_nMuons',
     nMuons,
     branch          = 'patmu',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
 
-t1.add_branch(
-    'patmu_pt',
+t1.add_branch('patmu_pt',
     pt,
-    mu_type         = 'patmu',
+    branch          = 'patmu',
+    vector          = True,
     default_value   = ROOT.std.vector('float')(),
-    vector          = 'patmu_nMuons',
     priority        = priority,
 )
 
@@ -115,13 +126,12 @@ t1.add_branch(
 # PRIORIDAD 2
 # =======================
 priority = 2
-t1.add_branch(
-    'patmu_isGood',
+t1.add_branch('patmu_isGood',
     selectionMask,
     branch          = 'patmu',
-    cut             = my_selection,
+    cut             = is_good,
+    vector          = True,
     default_value   = ROOT.std.vector('int')(),
-    vector          = 'patmu_nMuons',
     priority        = priority,
 )
 
@@ -130,32 +140,26 @@ t1.add_branch(
 # PRIORIDAD 1
 # =======================
 priority = 1
-t1.add_branch(
-    'patmu_isPrompt',
+t1.add_branch('patmu_isPrompt',
     selectionMask,
     branch          = 'patmu',
-    cut             = prompt_cut,
+    cut             = is_prompt,
+    vector          = True,
     default_value   = ROOT.std.vector('int')(),
-    vector          = 'patmu_nMuons',
     priority        = priority,
 )
-t1.add_branch(
-    'patmu_nGood',
+t1.add_branch('patmu_isDisplaced',
+    selectionMask,
+    branch          = 'patmu',
+    cut             = is_displaced,
+    vector          = True,
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority,
+)
+t1.add_branch('patmu_nGood',
     nPassing,
     branch          = 'patmu',
     selection       = 'isGood',
-    default_value   = ROOT.std.vector('int')(),
-    priority        = priority
-)
-# =======================
-# PRIORIDAD 0 (default)
-# =======================
-priority = 0
-t1.add_branch(
-    'patmu_nPrompt',
-    nPassing,
-    branch          = 'patmu',
-    selection       = 'isPrompt',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
@@ -163,95 +167,86 @@ t1.add_branch('patmu_isGood_idx',
     selectionIdx,
     branch          = 'patmu',
     selection       = 'isGood',
+    vector          = True,
     default_value   = ROOT.std.vector('int')(),
-    priority        = priority,
-    vector          = True
+    priority        = priority
 )
-
+# =======================
+# PRIORIDAD 0 (default)
+# =======================
+priority = 0
+t1.add_branch('patmu_nPrompt',
+    nPassing,
+    branch          = 'patmu',
+    selection       = 'isPrompt',
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority
+)
 t1.add_branch('patmu_isPrompt_idx',
     selectionIdx,
-    n_muons         = 'patmu_nMuons',
-    branch          = 'patmu_isPrompt',
+    branch          = 'patmu',
+    selection       = 'isPrompt',
+    vector          = True,
     default_value   = ROOT.std.vector('int')(),
     priority        = priority,
-    vector          = True
 )
+t1.add_branch('patmu_nDisplaced',
+    nPassing,
+    branch          = 'patmu',
+    selection       = 'isDisplaced',
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority
+)
+t1.add_branch('patmu_isDisplaced_idx',
+    selectionIdx,
+    branch          = 'patmu',
+    selection       = 'isDisplaced',
+    vector          = True,
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority,
+)
+t1.add_branch('patmu_d0_pv_idx',
+    sortBy,
+    branch          = 'patmu_d0_pv',
+    selection       = 'patmu_isGood',
+    vector          = True,
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority,
+)
+
 
 # =======================
 # PRIORIDAD -1
 # =======================
 
 priority = -1
-t1.add_branch('patmu_mu*_pt_idx',
-    getNHighest,
-    default_value   = ROOT.std.vector('int')(),
-    mu_type         = 'pat',
-    branch          = 'pt',
-    n               = 2,
-    mu_idx          = 'patmu_isGood_idx',
-    priority        = priority
-)
-
-t1.add_branch(
-    'patmu_mu*L_d0_pv_idx',
+t1.add_branch('patmu_mu*L_d0_pv_idx',
     getNLowest,
-    default_value   = ROOT.std.vector('int')(),
-    mu_type         = 'pat',
-    branch          = 'd0_pv',
     n               = 1,
-    do_abs          = True,
-    mu_idx          = 'patmu_isGood_idx',
+    idx             = 'patmu_d0_pv_idx',
+    default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
-
-t1.add_branch(
-    'patmu_mu*_d0_pv_idx',
+t1.add_branch('patmu_mu*_d0_pv_idx',
     getNHighest,
-    default_value   = ROOT.std.vector('int')(),
-    mu_type         = 'pat',
-    branch          = 'd0_pv',
     n               = 1,
-    do_abs          = True,
-    mu_idx          = 'patmu_isGood_idx',
+    idx             = 'patmu_d0_pv_idx',
+    default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
 
-t1.add_branch(
-    'patmu_mu*L_d0_bs_idx',
-    getNLowest,
-    default_value   = ROOT.std.vector('int')(),
-    mu_type         = 'pat',
-    branch          = 'd0_bs',
-    n               = 1,
-    do_abs          = True,
-    mu_idx          = 'patmu_isGood_idx',
-    priority        = priority
-)
-
-t1.add_branch(
-    'patmu_mu*_d0_bs_idx',
-    getNHighest,
-    default_value   = ROOT.std.vector('int')(),
-    mu_type         = 'pat',
-    branch          = 'd0_bs',
-    n               = 1,
-    do_abs          = True,
-    mu_idx          = 'patmu_isGood_idx',
-    priority        = priority
-)
 
 # =======================
 # PRIORIDAD -2
 # =======================
 
 priority = -2
-t1.add_branch(
-    'dimPL_mass',
+t1.add_branch('dimPL_mass',
     invMass_MuMu,
-    default_value   = ROOT.std.vector('double')(),
-    mu_type         = 'pat',
+    branch          = 'patmu',
     mu_idx1         = 'patmu_mu1_d0_pv_idx',
     mu_idx2         = 'patmu_mu1L_d0_pv_idx',
+    default_value   = ROOT.std.vector('double')(),
     priority        = priority
 )
 

@@ -14,20 +14,22 @@ Vint getNLowest_fromIdx(
     int     NHighest,
     bool    doAbs
 ) {
+    // Initialize variables
+        Vfloat selectedValues;
+        Vfloat sortedValues;
+        Vint passingMu;
+
+    if (mu_idx.size() == 0) {return passingMu;} // In case no muon to select
 
     // Inicializamos las variables
-        Vfloat selectedValues;
         for (auto jMu : mu_idx) {selectedValues.push_back(mu_values[jMu]);}
+        
     // En caso de quere usar el valor absoluto para comparar
         if (doAbs) {
-            Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return abs(x) < abs(y);});
+            sortedValues = Sort(selectedValues, [](double x, double y) {return abs(x) < abs(y);});
         } else {
-            Vfloat sortedValues = Sort(selectedValues, [](double x, double y) {return x < y;});
+            sortedValues = Sort(selectedValues, [](double x, double y) {return x < y;});
         }
-
-
-        Vfloat sortedValues = Sort(selectedValues);
-        Vint passingMu;
 
 
     // Miramos si pasan el corte
@@ -65,4 +67,22 @@ Vint getNLowest(
     
 
     return passingMu;
+};
+
+Vint getNLowest_fromBranch(
+    Vint    mu_idx,
+    int     NLowest
+) {
+
+    // Creamos un vector de índices
+        Vint mu_selectedIdx;
+        if (mu_idx.size() == 0) {
+            for (auto i=0; i< NLowest;++i) {mu_selectedIdx.push_back(-999);};// In case no muon to select
+
+        } else {
+            for (auto i=1; i < NLowest+1;++i) {mu_selectedIdx.push_back(mu_idx[-i]);};
+        }
+        
+        return mu_selectedIdx;
+
 };
