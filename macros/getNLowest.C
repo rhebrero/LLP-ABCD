@@ -76,11 +76,12 @@ Vint getNLowest_fromBranch(
 
     // Creamos un vector de índices
         Vint mu_selectedIdx;
-        if (mu_idx.size() == 0) {
-            for (auto i=0; i< NLowest;++i) {mu_selectedIdx.push_back(-999);};// In case no muon to select
+        int nPassing = mu_idx.size();
+        if (nPassing == 0) {
+            for (int i=0; i< NLowest;++i) {mu_selectedIdx.push_back(-999);};// In case no muon to select
 
         } else {
-            for (auto i=1; i < NLowest+1;++i) {mu_selectedIdx.push_back(mu_idx[-i]);};
+            for (int i=1; i < NLowest+1;++i) {mu_selectedIdx.push_back(mu_idx[nPassing-i]);};
         }
         
         return mu_selectedIdx;

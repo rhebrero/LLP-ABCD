@@ -7,8 +7,7 @@ import numpy as np
 import pdb
 from copy import deepcopy
 from llp.utils.paths import data_directory, check_root_file
-from torch import Value
-from .Branch import Branch, BranchCollection
+from .Branch import Branch, BranchCollection, Formula
 import os, sys
 
   
@@ -19,14 +18,14 @@ class Tree(object):
     def __init__(
         self,
         tree_path,
-        branches = {},
-        files = [],
-        alias = None,
-        debug = False,
-        entries = 0,
-        debug_step = 10000,
-        output_path = None,
-        overwrite = False
+        branches    = {}    ,
+        files       = []    ,
+        alias       = None  ,
+        debug       = False ,
+        entries     = 0     ,
+        debug_step  = 10000 ,
+        output_path = None  ,
+        overwrite   = False
     ):
         if not alias:
             self._alias = f't{self.active_trees}'
@@ -35,17 +34,18 @@ class Tree(object):
         
         
             
-        Tree.active_trees += 1
-        self.is_written = False
-        self.overwrite = overwrite
-        self.are_branches_set = False
+        Tree.active_trees      += 1
+        self.is_written         = False
+        self.overwrite          = overwrite
+        self.are_branches_set   = False
         
-        self.src_branches = branches
-        self.new_branches = {}
-        self.new_collections = {}
-        self._branch_priority = None
-        self._min_entry = 0
-        self._max_entry = None
+        self.src_branches       = branches
+        self.new_branches       = {}
+        self.new_collections    = {}
+        self.formulas           = {}
+        self._branch_priority   = None
+        self._min_entry         = 0
+        self._max_entry         = None
         
         
         
@@ -80,9 +80,9 @@ class Tree(object):
         
         
         self._tree_path = tree_path
-        self._src_tree = None
-        self._new_file = None
-        self._new_tree = None
+        self._src_tree  = None
+        self._new_file  = None
+        self._new_tree  = None
         
                 
         self.load_files()
@@ -115,7 +115,7 @@ class Tree(object):
             new_file.cd(folder)
         
         
-        if self.nentries == 0: self.max_entry = src_tree.GetEntries()-1
+        if self.nentries == 0: self._max_entry = src_tree.GetEntries()-1
         
         self.activate_branches(src_tree, self.src_branches, verbose = False)
         self._new_tree = new_tree = src_tree.CloneTree(0)
@@ -155,7 +155,7 @@ class Tree(object):
     
     @property
     def total_new_branches(self):
-        return self.new_branches | self.new_collections
+        return self.new_branches | self.new_collections | self.formulas
     
     @property
     def total_branches(self):
@@ -266,19 +266,42 @@ class Tree(object):
             else:
                 print(f' - {branch_name}: {branch.value}')
     
+    def get_entry(self,n_entry):
+        if self.new_tree:
+            self.new_tree.GetEntry(n_entry)
+        if self.src_tree:
+            self.src_tree.GetEntry(n_entry)
+        # for branch in self.formulas.values():
+        #     branch.formula.Compile()
+            # branch.formula.SetTree(branch.tree)
     
-    
-    
+    def add_formula(
+        self,
+        branch_name,
+        formula,
+        default_value,
+        vector = None,
+        priority = 0
+        
+    ):
+        self.formulas[branch_name] = Formula(
+                                                self.new_tree                   ,
+                                                branch_name                     ,
+                                                value           = default_value ,
+                                                vector          = vector        ,
+                                                formula         = formula       ,
+                                                priority        = priority
+                                            )
+
     
     
     def process_branches(self,verbose = False):
         self.set_branches()
-        
+
         for i, n_entry in enumerate(range(self.min_entry,self.max_entry+1)):
             
             if (not (i+1) % self.debug_step) & (self.debug): print(f'Filling entry #{i+1}...')
-            self.new_tree.GetEntry(n_entry)
-            self.src_tree.GetEntry(n_entry)
+            self.get_entry(n_entry)
             
             # for branch_name in self.
             
@@ -291,19 +314,16 @@ class Tree(object):
                     '======================================'
                 )
             
-                print('\n Before Branch update')
             # Actualizamos los valores de cada branch según su prioridad
             for p, branch_dict in self.branch_priority.items():
                 for branch_name, branch in branch_dict.items():
-                    if verbose: print(branch)
                     branch()
+                    if verbose: print(branch)
             
             
-            if verbose:
-                print('\n After Branch update')
-                for branch_name, branch in self.total_new_branches.items():
-                    print(branch)
-                print(f'patmu_d0_pv: {self.new_tree.patmu_d0_pv}')
+            print(f'patmu_d0_pv: {self.new_tree.patmu_d0_pv}')
+            print(f'patmu_px: {self.new_tree.patmu_px}')
+            print(f'patmu_py: {self.new_tree.patmu_py}')
 
             self.new_tree.Fill()
 

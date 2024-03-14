@@ -6,13 +6,14 @@ from utils import confirmation
 parser = argparse.ArgumentParser(description="Handle to submit lxplus condor jobs, it request a plain file with all the scripts to run.")
 
 #modes
-parser.add_argument('--jobs'       , dest='jobs'      , default='jobs.sh'       , help='input file (with scripts to run on)', required=True)
-parser.add_argument('--flavour'    , dest='flavour'   , default='longlunch'     , help='which condor job flavour to use')
-parser.add_argument('--use-proxy'  , dest='proxy'     , action='store_true'     , help='whether to ship the GRID certificate with the jobs')
-parser.add_argument('--ciemat'     , dest='ciemat'    , action='store_true'     , help='whether to run at CIEMAT (grid GRID combined with certificate untested)')
-parser.add_argument('--pnfs'       , dest='pnfs'      , action='store_true'     , help='if running at CIEMAT, additional request machines with access to PNFS')
-parser.add_argument('--gaefacil'   , dest='gaefacil'  , action='store_true'     , help='whether to include gaefacilXX machines to available machines')
-parser.add_argument('--xcache'     , dest='xcache'    , action='store_true'     , help='whether to include gaefacilXX machines to available machines', default = 'gaefacil01')
+parser.add_argument('--jobs'            , dest='jobs'           , default='jobs.sh'       , help='input file (with scripts to run on)', required=True)
+parser.add_argument('--flavour'         , dest='flavour'        , default='longlunch'     , help='which condor job flavour to use')
+parser.add_argument('--use-proxy'       , dest='proxy'          , action='store_true'     , help='whether to ship the GRID certificate with the jobs')
+parser.add_argument('--ciemat'          , dest='ciemat'         , action='store_true'     , help='whether to run at CIEMAT (grid GRID combined with certificate untested)')
+parser.add_argument('--pnfs'            , dest='pnfs'           , action='store_true'     , help='if running at CIEMAT, additional request machines with access to PNFS')
+parser.add_argument('--gaefacil'        , dest='gaefacil'       , action='store_true'     , help='whether to include gaefacilXX machines to available machines')
+
+
 
 args = parser.parse_args()
 
@@ -79,19 +80,17 @@ condorSubmitAdd = "".join([
 # modifications needed for CIEMAT submission
 if args.ciemat:
     condorSubmit = "".join([
-                        "executable             = condorExecutable.sh\n",
-                       f"xrd_redir              = {args.xcache}.ciemat.es:1094\n" # Para usar la xCache por defecto     
+                        "executable             = condorExecutable.sh\n"
                     ])
-
     if args.pnfs:
        condorSubmit += "".join([
-                        'requirements = stringListIMember("DCACHE_NFS", TARGET.WN_property, ",")\n',
-                        'request_cpus=4\n'
+                        'requirements           = stringListIMember("DCACHE_NFS", TARGET.WN_property, ",")\n',
+                        'request_cpus           = 4\n'
                         ])
     if args.gaefacil:
         condorSubmit += "".join([
-                        '+CieIncludeAF           = True\n',         # Includes Ciemat's Analysis Facility's machines
-                        '+CieSingularityImage    = cc7\n'           # CentOS 7
+                        '+CieIncludeAF          = True\n',         # Includes Ciemat's Analysis Facility's machines
+                        '+CieSingularityImage   = cc7\n'           # CentOS 7
                         ])
     
     condorSubmitAdd = "".join([

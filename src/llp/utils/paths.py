@@ -32,9 +32,12 @@ def is_valid(path):
             
 
 def check_root_file(path):
-    
-    if is_valid(data_directory / pathlib.Path(f'{path}.root')):
-        return data_directory / pathlib.Path(f'{path}.root')
+    path = pathlib.Path(path)
+    if path.suffix == '.root': pass
+    elif path.suffix == '': path = pathlib.Path(str(path)+'.root')
+        
+    if is_valid(data_directory / path):
+        return data_directory / path
     elif is_valid(path):
         return path
     else:

@@ -13,4 +13,5 @@ def pt(
     return ROOT.pt(
             getattr(entry, f'{branch}_px'),
             getattr(entry, f'{branch}_py'),
+            getattr(entry, f'{branch}_nMuons')[0]
         )

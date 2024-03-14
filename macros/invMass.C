@@ -1,4 +1,6 @@
-using Vfloat = ROOT::VecOps::RVec<float>;
+using Vfloat    = ROOT::VecOps::RVec<float>;
+using Vdouble   = ROOT::VecOps::RVec<double>;
+
 #include "TLorentzVector.h"
 #include "TMath.h"
 #include <vector>

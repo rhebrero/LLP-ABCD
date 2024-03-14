@@ -5,7 +5,7 @@ load_macro('invMass')
 load_macro('pt')
 
 
-file_path = '/nfs/cms/martialc/Displaced2024/llp/data/DiMuons_1PM_1e5.root'
+file_path = '/nfs/cms/martialc/Displaced2024/llp/data/test_condor_1e5.root'
 
 # branch = 'dim_mass'
 # nmu = 1
@@ -26,8 +26,8 @@ triggers = '(trig_hlt_idx>=0) && ('+'||'.join([f'trig_hlt_path == \"{trigger}\"'
 
 
 selection_list = [
-    # triggers
-    'patmu_isAnyGood',
+    triggers,
+    'patmu_nGood',
     # '(dimPL_mass < 80) || (dimPL_mass > 110)'
 ]
 

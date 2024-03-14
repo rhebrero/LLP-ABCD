@@ -1,5 +1,6 @@
 from copy import deepcopy
-
+from llp.pyroot.macros import evalFormula
+import ROOT
 
 class Branch(object):
     def __init__(
@@ -45,13 +46,16 @@ class Branch(object):
     
     def __call__(self):
         if self.f:
+            # print(self.name, self.value)
             self.value.clear()  
             if not self.vector:
                 self.value.push_back(self.f(self.tree,**self.kwargs))
             else:
                 # PyROOT RVec
                 try:
+                    # print(self.name, self.value)
                     [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
+                    # print(self.name, self.value)
                 except Exception as e:
                     print(self.name,self.value,self.f)
                     raise e
@@ -120,4 +124,46 @@ class BranchCollection(Branch):
             f'{branch_name}: {value} -> {getattr(self.tree,branch_name)}'
             for branch_name, value in self.values.items()
         ])
-            
+
+
+class Formula(Branch):
+    def __init__(
+        self,
+        tree,
+        branch_name,
+        value,
+        formula,
+        alias = None,
+        vector = False,
+        priority = 0,
+        **kwargs
+    ):
+        #TODO: Terminar esto para poder producir N branches a partir del nombre con *
+        super().__init__(tree,branch_name,value,None,alias,evalFormula,vector,priority,**kwargs)
+        self.formula = formula
+        
+                    
+    def set_branches(self):
+        # Función dummy, porque no se necesita para la TTreeFormula
+        super().set_branches()
+        self.formula = ROOT.TTreeFormula(f'{self.name}_formula',self.formula,self.tree)
+        # self.formula.Compile()
+        return
+    
+    def __call__(self):
+        if self.f:
+            # print(self.name, self.value)
+            self.value.clear()  
+            if not self.vector:
+                self.value.push_back(self.f(self.formula))
+            else:
+                # PyROOT RVec
+                try:
+                    # print(self.name, self.value)
+                    [self.value.push_back(e) for e in self.f(self.formula)]
+                    # print(self.name, self.value)
+                except Exception as e:
+                    print(self.name,self.value,self.f)
+                    raise e
+    def __str__(self):
+        return f'{self.name}: {self.value} -> {getattr(self.tree,self.name)}'

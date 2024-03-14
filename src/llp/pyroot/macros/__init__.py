@@ -6,3 +6,6 @@ from .selection     import selectionMask, selectionIdx, nPassing
 from .perEntry      import perEntry
 from .invMass       import invMass_MuMu
 from .sortBy        import sortBy
+from .evalFormula   import evalFormula
+from .isGood        import isGood
+from .isPrompt      import isPrompt

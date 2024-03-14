@@ -1,6 +1,7 @@
-using Vbool = ROOT::VecOps::RVec<bool>;
-using Vfloat = ROOT::VecOps::RVec<float>;
-using Vint = ROOT::VecOps::RVec<int>;
+#include "TLorentzVector.h"
+#include "TMath.h"
+#include <vector>
+
 
 bool test(
     float test
@@ -9,7 +10,7 @@ bool test(
 }
 
 bool Vtest(
-    Vfloat vector_var
+    vector<double> vector_var
 ) {
     // Longitud del vector
     return vector_var[0] > 0;

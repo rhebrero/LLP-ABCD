@@ -1,9 +1,9 @@
-using Vbool  = ROOT::VecOps::RVec<bool>;
-using Vfloat = ROOT::VecOps::RVec<float>;
-using Vint   = ROOT::VecOps::RVec<int>;
+#include "TLorentzVector.h"
+#include "TMath.h"
+#include <vector>
 
 int nMuons(
-    Vint muonIdx
+    vector<int> muonIdx
 ) {
     return muonIdx.size();
 }
