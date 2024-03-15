@@ -351,18 +351,11 @@ class Tree(object):
         self.are_branches_set = True
 
         self.set_branch_priority()
-        # self.activate_branches(self.new_tree)
         
-        # for branch_name, branch_value in self.branches.items():
-        #     self.src_tree.SetBranchStatus(branch_name, 1)
-        
-        # for branch_name, branch_value in self.new.items():            
-        #     self.new_tree.SetBranchStatus(branch_name, 1)
+        for branch_name, branch_value in self.new.items():            
+            self.tree.SetBranchStatus(branch_name, 1)
         return
-            
-
-
-    
+        
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt
     from llp.utils.macros import load_macro
