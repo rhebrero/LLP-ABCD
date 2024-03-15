@@ -34,7 +34,7 @@ def is_valid(path):
 def check_root_file(path):
     path = pathlib.Path(path)
     if path.suffix == '.root': pass
-    elif path.suffix == '': path = pathlib.Path(str(path)+'.root')
+    elif path.suffix == '': path = path.with_suffix('.root')
         
     if is_valid(data_directory / path):
         return data_directory / path

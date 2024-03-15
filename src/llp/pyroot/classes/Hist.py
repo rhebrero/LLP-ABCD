@@ -3,21 +3,24 @@ import numpy as np
 import pathlib
 from collections.abc import Iterable
 from llp.pyroot.classes import Tree
+import pathlib
 
 class Hist(object):
     fig_formats = [".png", ".pdf", ".tex", ".C"]
     plot_type = {
-            'data'  :   'hist',
-            'sim'   :   'SAMES'
+            'data'      :   'HIST',
+            'signal'    :   'SAMES'
         }
     
     def __init__(
         self,
         branch,
+        prefix = '',
+        suffix = '',
         nbins = 100,
         range = None,
         norm = False,
-        logy = False
+        logy = False,
     ):
         self.color_palette = None
         self.color_generator = None
@@ -39,76 +42,103 @@ class Hist(object):
         self.range = range
         self.norm = norm
         pass
+        
     
     
-    
-    def add_tree(
+    def add_hist(
             self,
-            tree : Tree,
-            label = None,
-            kind = 'data'
+            title           : str                               ,
+            file_path       : str                               ,
+            tree_path       : str                               ,
+            freinds_path    : str                   = []        ,
+            selection       : str                   = None      ,
+            kind            : str                   = 'data'    ,
+            weight          : float                 = None      ,
+            ylabel          : str                   = 'Events'  ,
+            plot_type       : str                   = 'data'    ,
         ):
-        if not label: label = tree.alias
         
-        self.trees      [label] = tree
-        self.colors     [label] = color = self.get_color()
-        self.histograms [label] = hist  = rt.TH1D(
-                                                label,
-                                                f'{self.branch} hist',
-                                                self.nbins
-                                            )
+        if isinstance(file_path, (str, pathlib.Path)):
+            file_list = [file_path]
+        elif isinstance(file_path, Iterable):
+            file_list = file_path
+        else:
+            raise ValueError(f'file_path must be path or list of paths, {type(file_path)} given instead')
+        
+        tree = rt.TChain(tree_path)
+        [tree.Add(file) for file in file_list]
+        
+        hist_id = f'h{str(len(self.histograms))}' # h0, h1, h2...
+        
+        self.trees      [hist_id] = tree
+        self.colors     [hist_id] = color = self.get_color()
+        
+        if not self.range:
+            self.histograms [hist_id] = hist  = rt.TH1D(
+                                                    hist_id,
+                                                    title,
+                                                    self.nbins
+                                                )
+        else:
+            self.histograms [hist_id] = hist  = rt.TH1D(
+                                                    hist_id,
+                                                    title,
+                                                    self.nbins,
+                                                    *np.double(self.range)
+                                                )
+                            
+        
+        print(f'Filtros: {selection}')
+        if selection:
+            tree.Draw(
+                f'{self.branch} >> {hist_id}',
+                selection,
+                'goff' #TODO: Preguntarle a Alberto por qué hace esto.
+            )
+        else:
+            tree.Draw(
+                f'{self.branch} >> {hist_id}',
+                '1==1',
+                'goff' #TODO: Preguntarle a Alberto por qué hace esto.
+            )
+        
+        scale = 1
+        if weight: scale *= weight
+        if self.norm & (hist.Integral() > 0): scale /= hist.Integral()
+        hist.Scale(scale)
+        
+        if len(self.histograms) > 1:
+            hist.Draw('SAMES')
+        else:
+            hist.Draw(self.plot_type[plot_type])
             
-        
-    
-    def process_trees(self):
-        for label, tree in self.trees.items():
-            if self.range is None:
-                pass
-            else:
-                self.histograms[label] = hist = rt.TH1D(label, f'{self.branch} hist', self.nbins, *np.double(self.range))
-
-        pass
-    
-    
-    def add_data(
-            self,
-            file_path,
-            tree_path,
-            label = None,
-            filters = [],
-            kind = 'data'
-        ):
-                
-        
-        print(f'Filtros: {" && ".join(filters)}')
-        tree.Draw(
-            f'{self.branch} >> {label}',
-            ' && '.join(filters),
-            'goff' #TODO: Preguntarle a Alberto por qué hace esto.
-        )
-        
-        
-        if self.norm & (hist.Integral() > 0):
-            hist.Scale(1 / hist.GetEntries())
             
-        hist.Draw(plot_label)
         hist.SetLineColor(color)
-        hist.GetXaxis().SetTitle(self.branch)
-        ylabel = 'Events'
-        if self.norm: ylabel += ' norm.' 
-        hist.GetYaxis().SetTitle(ylabel)
+        
+        if weight: ylabel += ' scaled'
+        elif self.norm: ylabel += ' norm.'
+        
+        if len(self.histograms) == 1:
+            hist.GetXaxis().SetTitle(self.branch)
+            hist.GetYaxis().SetTitle(ylabel)
         
         rt.gPad.Update()
         stats = hist.FindObject('stats')
+        
         stats.SetTextColor(color)
         stats.SetX1NDC(0.80-0.2*len(self.histograms))
         stats.SetX2NDC(0.99-0.2*len(self.histograms))
-        
         
         self.canvas = self.canvas.DrawClone()
         
         return 
 
+    def add_data(self,*args,**kwargs):
+        self.add_hist(*args,plot_type = 'data', **kwargs)
+    
+    def add_signal(self,*args,**kwargs):
+        self.add_hist(*args,plot_type = 'signal', **kwargs)
+    
     def data_plot_type(self):
         plot_type = ''
     
@@ -144,3 +174,24 @@ class Hist(object):
         if not self.color_generator:
             self.color_generator = self.set_color_generator()
         return next(self.color_generator)
+
+if __name__ == '__main__':
+    file_hist = [
+        '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__000_1e5.root',
+        '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__1e5_2e5.root',
+        '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__2e5_3e5.root',
+        '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__3e5_4e5.root',
+    ]
+    signal = '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/StopToMuB_v05/StopToMuB_500_1.root'
+    
+    h = Hist('dimPL_mass',range = (0,300), nbins=100, logy = True, norm = True)
+    h.add_data('DiMuon data',
+        file_hist,
+        'SimpleNTupler/DDTree'
+    )
+    h.add_signal('Stop 500 GeV 1 mm',
+        signal,
+        'SimpleMiniNTupler/DDTree',
+        weight = 0.03
+    )
+    h.save_to('/nfs/cms/martialc/Displaced2024/llp/sandbox/figs/test')
