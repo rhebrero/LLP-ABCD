@@ -2,7 +2,7 @@ import subprocess
 import os 
 import argparse
 from utils import confirmation
-
+import pathlib
 parser = argparse.ArgumentParser(description="Handle to submit lxplus condor jobs, it request a plain file with all the scripts to run.")
 
 #modes
@@ -12,6 +12,7 @@ parser.add_argument('--use-proxy'       , dest='proxy'          , action='store_
 parser.add_argument('--ciemat'          , dest='ciemat'         , action='store_true'     , help='whether to run at CIEMAT (grid GRID combined with certificate untested)')
 parser.add_argument('--pnfs'            , dest='pnfs'           , action='store_true'     , help='if running at CIEMAT, additional request machines with access to PNFS')
 parser.add_argument('--gaefacil'        , dest='gaefacil'       , action='store_true'     , help='whether to include gaefacilXX machines to available machines')
+parser.add_argument('--source'          , dest='source'         , default='../src'        , help='path to extend PYTHONPATH')
 
 
 
@@ -56,6 +57,7 @@ condorExecutable = "".join([
                         f"cd {CMSSW_BASE}/src/\n",
                         f"eval `scramv1 runtime -sh`\n",
                         f"cd {PWD}\n",
+                        f"export PYTHONPATH=$PYTHONPATH:{pathlib.Path(args.source).resolve()}\n",
                         f"$@\n"
                     ])
 

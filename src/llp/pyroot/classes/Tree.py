@@ -320,10 +320,10 @@ class Tree(object):
                     branch()
                     if verbose: print(branch)
             
-            
-            print(f'patmu_d0_pv: {self.new_tree.patmu_d0_pv}')
-            print(f'patmu_px: {self.new_tree.patmu_px}')
-            print(f'patmu_py: {self.new_tree.patmu_py}')
+            if verbose:
+                print(f'patmu_d0_pv: {self.new_tree.patmu_d0_pv}')
+                print(f'patmu_px: {self.new_tree.patmu_px}')
+                print(f'patmu_py: {self.new_tree.patmu_py}')
 
             self.new_tree.Fill()
 

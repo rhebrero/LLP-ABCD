@@ -1,19 +1,29 @@
 import ROOT as rt
 import numpy as np
 from llp.utils.macros import load_macro
+import numpy as np
 load_macro('invMass')
 load_macro('pt')
 
 
-file_path = '/nfs/cms/martialc/Displaced2024/llp/data/test_condor_1e5.root'
+file_hist = [
+    '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__000_1e5.root',
+    '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__1e5_2e5.root',
+    '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__2e5_3e5.root',
+    '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__3e5_4e5.root',
+]
+file_hist = [
+    '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC__000_1e5.root',
+]
 
 # branch = 'dim_mass'
 # nmu = 1
-branch = 'patmu_nPrompt'
+prefix = ''
+branch = 'patmu_nDisplaced'
 # output = f'patmu_pt__mu1L_d0_pv_idx'
-output = branch
-nbins = 10
-range = (0,10)
+output = branch+'__Z'
+nbins = 30
+range = (0,30)
 
 
 data_triggers = [
@@ -27,8 +37,8 @@ triggers = '(trig_hlt_idx>=0) && ('+'||'.join([f'trig_hlt_path == \"{trigger}\"'
 
 selection_list = [
     triggers,
-    'patmu_nGood',
-    # '(dimPL_mass < 80) || (dimPL_mass > 110)'
+    # '(dimPL_mass < 80) || (dimPL_mass > 110)',
+    '(dimPL_mass > 80) && (dimPL_mass < 110)',
 ]
 
 
@@ -40,16 +50,16 @@ selection_list = [
 
 
 
-file_rt = rt.TFile.Open(file_path)
-tree_rt = file_rt.Get('SimpleNTupler/DDTree')
+tree_rt = rt.TChain('SimpleNTupler/DDTree')
+[tree_rt.Add(file) for file in file_hist]
 
-files = [
+
+file_src = [
     '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022B-ReReco-v2.root',
     '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022C-ReReco-v2.root'
 ]
-
 tree_src = rt.TChain('SimpleNTupler/DDTree')
-[tree_src.Add(file) for file in files]
+[tree_src.Add(file) for file in file_src]
 
 tree_rt.AddFriend(tree_src)
 # mass = rt.TTreeFormula(
@@ -77,6 +87,7 @@ else:
 print(hist.Integral())
 hist.Draw('SAMES',)
 
+hist.GetYaxis().SetRangeUser(0.8,np.power(10,np.ceil(np.log10(hist.GetMaximum()+1)))*1.2)
 # hist.GetXaxis().SetRangeUser(0,100)
 canvas.Draw()
 canvas.SaveAs(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/figs/{output}.pdf')

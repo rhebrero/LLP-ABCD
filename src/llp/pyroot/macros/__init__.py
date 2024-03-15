@@ -9,3 +9,4 @@ from .sortBy        import sortBy
 from .evalFormula   import evalFormula
 from .isGood        import isGood
 from .isPrompt      import isPrompt
+from .isDisplaced   import isDisplaced
