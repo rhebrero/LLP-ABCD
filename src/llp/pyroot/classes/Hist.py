@@ -21,6 +21,7 @@ class Hist(object):
         range = None,
         norm = False,
         logy = False,
+        selection = None
     ):
         self.color_palette = None
         self.color_generator = None
@@ -41,6 +42,10 @@ class Hist(object):
         self.nbins = nbins
         self.range = range
         self.norm = norm
+        
+        if not selection:   self.selection = '1'
+        else:               self.selection = selection
+        
         pass
         
     
@@ -59,9 +64,9 @@ class Hist(object):
         ):
         
         if isinstance(file_path, (str, pathlib.Path)):
-            file_list = [file_path]
+            file_list = [str(file_path)]
         elif isinstance(file_path, Iterable):
-            file_list = file_path
+            file_list = [str(file) for file in file_path]
         else:
             raise ValueError(f'file_path must be path or list of paths, {type(file_path)} given instead')
         
@@ -92,13 +97,13 @@ class Hist(object):
         if selection:
             tree.Draw(
                 f'{self.branch} >> {hist_id}',
-                selection,
+                '('+') && ('.join([selection,self.selection])+')',
                 'goff' #TODO: Preguntarle a Alberto por qué hace esto.
             )
         else:
             tree.Draw(
                 f'{self.branch} >> {hist_id}',
-                '1==1',
+                '('+') && ('.join(['1',self.selection])+')',
                 'goff' #TODO: Preguntarle a Alberto por qué hace esto.
             )
         
