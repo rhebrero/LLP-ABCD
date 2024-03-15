@@ -1,6 +1,7 @@
 import ROOT as rt
 import numpy as np
 from llp.utils.macros import load_macro
+from llp.pyroot import Hist
 import numpy as np
 
 file_hist = [
