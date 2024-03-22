@@ -6,7 +6,6 @@ load_macro('isDisplaced')
 def isDisplaced(
         entry               : ROOT.TTree        ,
         branch              : str   = 'patmu'   ,
-        d0                  : float = 0.1       ,
         d0sig               : float = 6         ,
         per_muon            : bool  = True      ,
     ) -> 'ROOT.VecOps.RVecI':
@@ -14,6 +13,6 @@ def isDisplaced(
     return ROOT.isDisplaced(
         getattr(entry, f'{branch}_d0_pv'    ),
         getattr(entry, f'{branch}_d0sig_pv' ),
-        d0,
+        getattr(entry, f'{branch}_isGood'   ),
         d0sig
     )

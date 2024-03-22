@@ -18,6 +18,9 @@ parser.add_argument('--source'          , dest='source'         , default='../sr
 
 args = parser.parse_args()
 
+logs_path = f'logs/{pathlib.Path(args.jobs).stem}'
+
+
 # Check if pnfs is True while ciemat is not
 if args.pnfs and (not args.ciemat):
     parser.error("--pnfs requires --ciemat to be set to True")
@@ -69,9 +72,9 @@ condorSubmit = "".join([
                 ])
 
 condorSubmitAdd = "".join([
-                        'output                 = logs/run{runNum}/{logname}_{index}.out\n',
-                        'log                    = logs/run{runNum}/{logname}_{index}.log\n',
-                        'error                  = logs/run{runNum}/{logname}_{index}.err\n',
+                        'output                 = {logpath}/{logname}_{index}.out\n',
+                        'log                    = {logpath}/{logname}_{index}.log\n',
+                        'error                  = {logpath}/{logname}_{index}.err\n',
                         'arguments              = {ARGS}\n',
                         '{proxy_literal}\n',
                         'should_transfer_files  = NO\n',
@@ -96,9 +99,9 @@ if args.ciemat:
                         ])
     
     condorSubmitAdd = "".join([
-                        'output                 = logs/run{runNum}/{logname}_{index}.out\n',
-                        'log                    = logs/run{runNum}/{logname}_{index}.log\n',
-                        'error                  = logs/run{runNum}/{logname}_{index}.err\n',
+                        'output                 = {logpath}/{logname}_{index}.out\n',
+                        'log                    = {logpath}/{logname}_{index}.log\n',
+                        'error                  = {logpath}/{logname}_{index}.err\n',
                         'arguments              = {ARGS}\n',
                         '{proxy_literal}\n',
                         'queue 1\n'
@@ -135,19 +138,13 @@ else:
 
 # make the logs directory if it doesn't exist
 subprocess.call('mkdir -p logs', shell=True)
+subprocess.call(f'mkdir -p {logs_path}', shell=True)
+
 
 # make executable
 executableName = 'condorExecutable.sh'
 with open(executableName, 'w') as f:
     f.write(condorExecutable.format(**locals()))
-
-# get the number of run* directories, and make the next one
-try:
-    numberOfExistingRuns = int(subprocess.check_output('ls -d logs/run* 2>/dev/null | wc -l', shell=True))
-except subprocess.CalledProcessError:
-    numberOfExistingRuns = 0
-runNum = numberOfExistingRuns+1
-subprocess.call(f'mkdir logs/run{runNum}', shell=True)
 
 
 # make the submit file
@@ -162,7 +159,7 @@ for index, line in enumerate(lines):
     
     if (len(line) == 0) or (line[0] == "#"): continue
     condorSubmit += condorSubmitAdd.format(
-        runNum        = runNum,
+        logpath       = logs_path,
         #logname       = line.split(".")[-1] if line != '' else 'dummy',
         logname       = "job",
         index         = index,
@@ -171,15 +168,15 @@ for index, line in enumerate(lines):
         proxy_literal = PROXY_LITERAL
     )
     print (line)
-print (f"logs in logs/run{runNum}")
+print (f"logs in {logs_path}")
 
 # write file and submit.
 submitName = 'condorSubmit'
 with open(submitName, 'w') as f:
     f.write(condorSubmit)
 
-subprocess.call(f'chmod +x {executableName}'                               , shell=True)
-subprocess.call(f'cp {executableName} {submitName} logs/run{runNum}'       , shell=True)
+subprocess.call(f'chmod +x {executableName}'                                , shell=True)
+subprocess.call(f'cp {executableName} {submitName} {logs_path}'             , shell=True)
 
 # direct submission from CIEMAT does not work... to be debugged.
 print('\n ')

@@ -5,6 +5,7 @@ using Vfloat = ROOT::VecOps::RVec<float>;
 #include "TTree.h"
 #include "TTreeFormula.h"
 // #include <vector>
+#include <iostream>
 
 
 Vint getNHighest_fromIdx(
@@ -90,15 +91,21 @@ Vint getNHighest_fromBranch(
     int     NHighest
 ) {
 
+
     // Creamos un vector de índices
         Vint mu_selectedIdx;
-        if (mu_idx.size() == 0) {
-            for (auto i=0; i< NHighest;++i) {mu_selectedIdx.push_back(-999);};// In case no muon to select
+        int nPassing = mu_idx.size();
+        // std::cout << NHighest << " primeros elementos de un vector de tamaño " << nPassing << std::endl;
 
-        } else {
-            for (auto i=0; i< NHighest;++i) {mu_selectedIdx.push_back(mu_idx[i]);};
-        }
-        
+        for (int i=0; i< NHighest;++i) {
+            if (i < nPassing) {
+                // std::cout << i << " : " << mu_idx[i] << std::endl;
+                mu_selectedIdx.push_back(mu_idx[i]);
+            } else {
+                // std::cout << i << " : -999" << std::endl;
+                mu_selectedIdx.push_back(-999);
+            }
+        };
         return mu_selectedIdx;
 
 };

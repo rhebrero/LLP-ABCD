@@ -8,7 +8,7 @@ using Vint = ROOT::VecOps::RVec<int>;
 Vint isDisplaced(
     Vfloat  d0          ,
     Vfloat  d0sig       ,
-    float   cut_d0      ,
+    Vint    isGood      ,
     float   cut_d0sig
 ) {
 
@@ -19,8 +19,8 @@ Vint isDisplaced(
 
     // Almacenamos el valor lógico de cada uno
         for (unsigned int i=0; i < nMuons; ++i) {
-            result =    (d0[i]      > cut_d0    ) &&
-                        (d0sig[i]   > cut_d0sig );
+            result =    (d0sig[i]   >= cut_d0sig ) &&
+                        (isGood[i]  == 1);
 
             passingMu.push_back(result);
         }

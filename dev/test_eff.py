@@ -86,7 +86,7 @@ signal_500_weigth_BC = 0.0269244036
 # ]
 # ====================================================================================
 ctau        = 1000 #mm
-signal      = 'SMuon'
+signal      = 'STop'
 nbins       = 30
 range       = (0,30)
 branch      = 'patmu_nMuons'
@@ -103,63 +103,85 @@ data_cut    = {
     '+1Prompt'      : 'patmu_nPrompt    > 0',
 }
 
+total_eff   = {'data' : {}, '100' : {}, '500' : {}}
+cut_eff     = {'data' : {}, '100' : {}, '500' : {}}
+trig_eff    = {'data' : {}, '100' : {}, '500' : {}}
 
-
-
-
-
+ctau_list = [1,10,100,1000,10000,100000]
 # ====================================================================
-c = Canvas(f'canvas__{branch}',
-    logy = True
-)
+for ctau in ctau_list:
+    c = Canvas(f'canvas__{branch}_{signal}_{ctau}',
+        logy = True
+    )
 
+    h_data = c.make_plot(Histogram,
+        data_src,
+        'SimpleNTupler/DDTree',
+        branch,
+        friend_path = data_friend,
+        range = range,
+        nbins = nbins,
+        logy = True,
+        alias = 'Data_B',
+        trigger = dict(trig_hlt_path = data_triggers),
+        cut     = dict(**data_cut, **global_cut),
+        title = 'Data Era B'
+    )
+    h_100 = c.make_plot(Histogram,
+        signal_100[signal].format(ctau=ctau),
+        'SimpleMiniNTupler/DDTree',
+        branch,
+        friend_path = signal_100_friend[signal].format(ctau=ctau),
+        range = range,
+        nbins = nbins,
+        logy = True,
+        alias = f'{signal}_100_{ctau}',
+        trigger = dict(trig_hlt_path = signal_triggers[signal]),
+        cut     = dict(**signal_cut, **global_cut)
+    )
+    h_500 = c.make_plot(Histogram,
+        signal_500[signal].format(ctau=ctau),
+        'SimpleMiniNTupler/DDTree',
+        branch,
+        friend_path = signal_500_friend[signal].format(ctau=ctau),
+        range = range,
+        nbins = nbins,
+        logy = True,
+        alias = f'{signal}_500_{ctau}',
+        trigger = dict(trig_hlt_path = signal_triggers[signal]),
+        cut     = dict(**signal_cut, **global_cut)
+    )
 
-h_data = c.make_plot(Histogram,
-    data_src,
-    'SimpleNTupler/DDTree',
-    branch,
-    friend_path = data_friend,
-    range = range,
-    nbins = nbins,
-    logy = True,
-    alias = 'Data_B',
-    trigger = dict(trig_hlt_path = data_triggers),
-    cut     = dict(**data_cut, **global_cut),
-    title = 'Data Era B'
-)
-h_100 = c.make_plot(Histogram,
-    signal_100[signal].format(ctau=ctau),
-    'SimpleMiniNTupler/DDTree',
-    branch,
-    friend_path = signal_100_friend[signal].format(ctau=ctau),
-    range = range,
-    nbins = nbins,
-    logy = True,
-    alias = f'{signal}_100',
-    trigger = dict(trig_hlt_path = signal_triggers[signal]),
-    cut     = dict(**signal_cut, **global_cut)
-)
-h_500 = c.make_plot(Histogram,
-    signal_500[signal].format(ctau=ctau),
-    'SimpleMiniNTupler/DDTree',
-    branch,
-    friend_path = signal_500_friend[signal].format(ctau=ctau),
-    range = range,
-    nbins = nbins,
-    logy = True,
-    alias = f'{signal}_500',
-    trigger = dict(trig_hlt_path = signal_triggers[signal]),
-    cut     = dict(**signal_cut, **global_cut)
-)
+    hist_list = [h_data,h_100,h_500]
+    [hist.eff_study() for hist in hist_list]
 
-h_data.eff_study()
-h_100.eff_study()
-h_500.eff_study()
+    # Añadimos las eficiencias
+    total_eff['data'][ctau] = h_data.efficiency
+    total_eff['100'] [ctau] = h_100.efficiency
+    total_eff['500'] [ctau] = h_500.efficiency
+    
+    trig_eff ['data'][ctau] = h_data.trig_eff
+    trig_eff ['100'] [ctau] = h_100.trig_eff
+    trig_eff ['500'] [ctau] = h_500.trig_eff
+    
+    cut_eff  ['data'][ctau] = h_data.cut_eff
+    cut_eff  ['100'] [ctau] = h_100.cut_eff
+    cut_eff  ['500'] [ctau] = h_500.cut_eff
 
-c.save_to('/nfs/cms/martialc/Displaced2024/llp/sandbox/Hist/current')
-c.save_to(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/Hist/{output}_{signal}_{ctau}')
+    c.save_to('/nfs/cms/martialc/Displaced2024/llp/sandbox/Hist/current')
+    c.save_to(f'/nfs/cms/martialc/Displaced2024/llp/sandbox/Hist/{output}_{signal}_{ctau}')
 
-h_data.canvas.Close()
-h_100.canvas.Close()
-h_500.canvas.Close()
-c.Close()
+    h_data.canvas.Close()
+    h_100.canvas.Close()
+    h_500.canvas.Close()
+    c.Close()
+# ==============================================
+import pickle
+
+eff_dict = {
+    'total'     : total_eff,
+    'trigger'   : trig_eff,
+    'seleciton' : cut_eff
+}
+with open(f'/nfs/cms/martialc/Displaced2024/llp/dev/eff/{signal}_1e0_1e5.eff','wb+') as file:
+    pickle.dump(eff_dict,file)

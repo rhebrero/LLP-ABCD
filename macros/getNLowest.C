@@ -52,7 +52,7 @@ Vint getNLowest_fromIdx(
 
 Vint getNLowest(
     Vfloat  mu_values,
-    int     NHighest,
+    int     NLowest,
     bool    doAbs
 ) {
 
@@ -61,11 +61,8 @@ Vint getNLowest(
         for (auto i=0; i< mu_values.size();++i) {mu_idx.push_back(i);};
     
     // Evaluamos
-        Vint passingMu = getNLowest_fromIdx(mu_values,mu_idx,NHighest,doAbs);
-        return passingMu;
-        
+        Vint passingMu = getNLowest_fromIdx(mu_values,mu_idx,NLowest,doAbs);   
     
-
     return passingMu;
 };
 
@@ -77,12 +74,17 @@ Vint getNLowest_fromBranch(
     // Creamos un vector de índices
         Vint mu_selectedIdx;
         int nPassing = mu_idx.size();
-        if (nPassing == 0) {
-            for (int i=0; i< NLowest;++i) {mu_selectedIdx.push_back(-999);};// In case no muon to select
+        // std::cout << NLowest << " últimos elementos de un vector de tamaño " << nPassing << std::endl;
 
-        } else {
-            for (int i=1; i < NLowest+1;++i) {mu_selectedIdx.push_back(mu_idx[nPassing-i]);};
-        }
+        for (int i=0; i< NLowest;++i) {
+            if (i < nPassing) {
+                // std::cout << i << " : " << mu_idx[nPassing-i-1] << std::endl;
+                mu_selectedIdx.push_back(mu_idx[nPassing-i-1]);
+            } else {
+                // std::cout << i << " : -999" << std::endl;
+                mu_selectedIdx.push_back(-999);
+            }
+        };
         
         return mu_selectedIdx;
 

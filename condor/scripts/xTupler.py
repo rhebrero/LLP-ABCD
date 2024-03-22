@@ -195,6 +195,14 @@ t1.add_branch('patmu_isGood_idx',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
+t1.add_branch('patmu_isGood_d0_pv_idx',
+    sortBy,
+    branch          = 'patmu_d0_pv',
+    selection       = 'patmu_isGood',
+    vector          = True,
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority,
+)
 # =======================
 # PRIORIDAD 0 (default)
 # =======================
@@ -214,6 +222,14 @@ t1.add_branch('patmu_isPrompt_idx',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority,
 )
+t1.add_branch('patmu_isPrompt_d0_pv_idx',
+    sortBy,
+    branch          = 'patmu_d0_pv',
+    selection       = 'patmu_isPrompt',
+    vector          = True,
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority,
+)
 t1.add_branch('patmu_nDisplaced',
     nPassing,
     branch          = 'patmu',
@@ -229,10 +245,17 @@ t1.add_branch('patmu_isDisplaced_idx',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority,
 )
+t1.add_branch('patmu_isDisplaced_d0_pv_idx',
+    sortBy,
+    branch          = 'patmu_d0_pv',
+    selection       = 'patmu_isDisplaced',
+    vector          = True,
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority,
+)
 t1.add_branch('patmu_d0_pv_idx',
     sortBy,
     branch          = 'patmu_d0_pv',
-    selection       = 'patmu_isGood',
     vector          = True,
     default_value   = ROOT.std.vector('int')(),
     priority        = priority,
@@ -244,17 +267,17 @@ t1.add_branch('patmu_d0_pv_idx',
 # =======================
 
 priority = -1
-t1.add_branch('patmu_mu*L_d0_pv_idx',
-    getNLowest,
-    n               = 1,
-    idx             = 'patmu_d0_pv_idx',
+t1.add_branch('dimDD_mu*_idx',
+    getNHighest,
+    n               = 2,
+    idx             = 'patmu_isDisplaced_d0_pv_idx',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
-t1.add_branch('patmu_mu*_d0_pv_idx',
-    getNHighest,
-    n               = 1,
-    idx             = 'patmu_d0_pv_idx',
+t1.add_branch('dimPP_mu*_idx',
+    getNLowest,
+    n               = 2,
+    idx             = 'patmu_isPrompt_d0_pv_idx',
     default_value   = ROOT.std.vector('int')(),
     priority        = priority
 )
@@ -263,17 +286,52 @@ t1.add_branch('patmu_mu*_d0_pv_idx',
 # =======================
 # PRIORIDAD -2
 # =======================
-
 priority = -2
-t1.add_branch('dimPL_mass',
+
+t1.add_branch('dimPD_muP_idx',
+    copyInt,
+    branch          = 'dimPP_mu1_idx',
+    default_value   = ROOT.std.vector('int')(),
+    # vector          = True,
+    priority        = priority
+)
+t1.add_branch('dimPD_muD_idx',
+    copyInt,
+    branch          = 'dimDD_mu1_idx',
+    default_value   = ROOT.std.vector('int')(),
+    priority        = priority
+)
+t1.add_branch('dimPP_mass',
     invMass_MuMu,
     branch          = 'patmu',
-    mu_idx1         = 'patmu_mu1_d0_pv_idx',
-    mu_idx2         = 'patmu_mu1L_d0_pv_idx',
+    mu_idx1         = 'dimPP_mu1_idx',
+    mu_idx2         = 'dimPP_mu2_idx',
+    default_value   = ROOT.std.vector('double')(),
+    priority        = priority
+)
+t1.add_branch('dimDD_mass',
+    invMass_MuMu,
+    branch          = 'patmu',
+    mu_idx1         = 'dimDD_mu1_idx',
+    mu_idx2         = 'dimDD_mu2_idx',
     default_value   = ROOT.std.vector('double')(),
     priority        = priority
 )
 
+
+# =======================
+# PRIORIDAD -3
+# =======================
+priority = -3
+
+t1.add_branch('dimPD_mass',
+    invMass_MuMu,
+    branch          = 'patmu',
+    mu_idx1         = 'dimPD_muP_idx',
+    mu_idx2         = 'dimPD_muD_idx',
+    default_value   = ROOT.std.vector('double')(),
+    priority        = priority
+)
 
 
 t1.process_branches(verbose=verbose) # Pon esto a True para CADA ITERACIÓN saqque los valores antes y depsués

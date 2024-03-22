@@ -23,7 +23,7 @@ double invMass_fromIdx(int idx1, int idx2,Vfloat pt, Vfloat eta,Vfloat phi){
     double mass;
 
     if ((idx1 < 0) || (idx2 < 0) || (idx1 ==idx2)) {
-        mass = 0; // defaults
+        mass = -999; // defaults
     } else{
         //Calculates the dimuon mass given 4-vector components of both muons
             mass = invMass(pt[idx1],eta[idx1],phi[idx1],pt[idx2],eta[idx2],phi[idx2]);

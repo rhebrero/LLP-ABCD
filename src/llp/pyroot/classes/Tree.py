@@ -349,12 +349,7 @@ class Tree(object):
             for branch in self.total_new_branches.values():
                 branch.set_branches()
         self.are_branches_set = True
-
         self.set_branch_priority()
-        
-        for branch_name, branch_value in self.new.items():            
-            self.tree.SetBranchStatus(branch_name, 1)
-        return
         
 if __name__ == '__main__':
     from llp.pyroot.macros import mu_nPrompt

@@ -10,3 +10,5 @@ from .evalFormula   import evalFormula
 from .isGood        import isGood
 from .isPrompt      import isPrompt
 from .isDisplaced   import isDisplaced
+from .getNElement   import getNElement
+from .copy          import copyFloat, copyInt, copyVFloat, copyVInt

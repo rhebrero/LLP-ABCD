@@ -46,23 +46,16 @@ class Branch(object):
     
     def __call__(self):
         if self.f:
-            # print(self.name, self.value)
-            self.value.clear()  
-            if not self.vector:
-                self.value.push_back(self.f(self.tree,**self.kwargs))
-            else:
-                # PyROOT RVec
-                try:
-                    # print(self.name, self.value)
-                    [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
-                    # print(self.name, self.value)
-                except Exception as e:
-                    print(self.name,self.value,self.f)
-                    raise e
-                # Python Array
-                # [self.value.pop() for e in range(len(self.value))]
-                # self.value.append(result[0])
-                # self.value.extend(result)
+            try:
+                self.value.clear()  
+                if not self.vector:
+                    self.value.push_back(self.f(self.tree,**self.kwargs))
+                else:
+                        [self.value.push_back(e) for e in self.f(self.tree,**self.kwargs)]
+            except Exception as e:
+                print(self.name,self.value,self.f)
+                raise e
+            
     def __str__(self):
         return f'{self.name}: {self.value} -> {getattr(self.tree,self.name)}'
 
