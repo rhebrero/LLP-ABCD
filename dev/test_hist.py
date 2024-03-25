@@ -15,25 +15,13 @@ data_triggers = [
     'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1', # From aescalante@github/work/DDM/SimpleTTree/plots_example.py
     'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'          # From aescalante@github/work/DDM/SimpleTTree/plots_example.py
 ]
-sim_triggers = [
-    'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v3' ,
-    'HLT_DoubleL2Mu23NoVtx_2Cha_v3' ,
-    'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1' ,
-    'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'
-]
-sim_triggers = [
-    'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v2' ,
-    'HLT_DoubleL2Mu23NoVtx_2Cha_v2' ,
-    'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1' ,
-    'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'
-]
 
 signal_triggers = {
     'STop'      : [
         'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v3' ,
         'HLT_DoubleL2Mu23NoVtx_2Cha_v3' ,
-        'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1' ,
-        'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'
+        'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v2' ,
+        'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v2'
     ],
     'SMuon'     : [
         'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v2' ,
@@ -85,22 +73,29 @@ signal_500_weigth_BC = 0.0269244036
 #     # 'patmu_pt[patmu_mu2_isGood_d0_pv_idx] > 10'
 # ]
 # ====================================================================================
-ctau        = 1000 #mm
+ctau        = 100 #mm
 signal      = 'SMuon'
-nbins       = 30
-range       = (0,30)
-branch      = 'patmu_nMuons'
+nbins       = 12
+range       = (0,12)
+branch      = 'patmu_d0sig_pv[dimDD_mu1_idx]'
 output      = branch
 global_cut  = {
     # 'OS'        :   '(dimPP_mu1_idx >= 0) && (dimPP_mu2_idx >= 0) && (patmu_charge[dimPP_mu1_idx] != patmu_charge[dimPP_mu2_idx])',
     '+2Good'        : 'patmu_nGood      > 1',
+    'MinD0_0p1'     : '(abs(patmu_d0_pv[dimDD_mu1_idx]) > 0.1) && (abs(patmu_d0_pv[dimDD_mu2_idx]) > 0.1)'
 }
 signal_cut  = {
-    '+2Displaced'   : 'patmu_nDisplaced > 1'
+    'All'           : 'patmu_nMuons >= 0',
+    # '+2Displaced'   : 'patmu_nDisplaced > 1',
+    # '+1Prompt'      : 'patmu_nPrompt        > 0',
+    # '+1Displaced'   : 'patmu_nDisplaced     > 0',
+    
 }
 data_cut    = {
-    '+1Displaced'   : 'patmu_nDisplaced > 0',
-    '+1Prompt'      : 'patmu_nPrompt    > 0',
+    'All'           : '1',
+    # '+1Displaced'   : 'patmu_nDisplaced > 0',
+    # '+1Prompt'      : 'patmu_nPrompt    > 0',
+
 }
 
 

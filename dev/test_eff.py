@@ -15,25 +15,13 @@ data_triggers = [
     'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1', # From aescalante@github/work/DDM/SimpleTTree/plots_example.py
     'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'          # From aescalante@github/work/DDM/SimpleTTree/plots_example.py
 ]
-sim_triggers = [
-    'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v3' ,
-    'HLT_DoubleL2Mu23NoVtx_2Cha_v3' ,
-    'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1' ,
-    'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'
-]
-sim_triggers = [
-    'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v2' ,
-    'HLT_DoubleL2Mu23NoVtx_2Cha_v2' ,
-    'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1' ,
-    'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'
-]
 
 signal_triggers = {
     'STop'      : [
         'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v3' ,
         'HLT_DoubleL2Mu23NoVtx_2Cha_v3' ,
-        'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v1' ,
-        'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v1'
+        'HLT_DoubleL2Mu10NoVtx_2Cha_VetoL3Mu0DxyMax1cm_v2' ,
+        'HLT_DoubleL3Mu16_10NoVtx_DxyMin0p01cm_v2'
     ],
     'SMuon'     : [
         'HLT_DoubleL2Mu23NoVtx_2Cha_CosmicSeed_v2' ,
@@ -86,6 +74,8 @@ signal_500_weigth_BC = 0.0269244036
 # ]
 # ====================================================================================
 ctau        = 1000 #mm
+d0_min      = 0.01
+D0Min       = str(d0_min).replace('.','p')
 signal      = 'STop'
 nbins       = 30
 range       = (0,30)
@@ -94,6 +84,8 @@ output      = branch
 global_cut  = {
     # 'OS'        :   '(dimPP_mu1_idx >= 0) && (dimPP_mu2_idx >= 0) && (patmu_charge[dimPP_mu1_idx] != patmu_charge[dimPP_mu2_idx])',
     '+2Good'        : 'patmu_nGood      > 1',
+    f'MinD0_{D0Min}' : f'(abs(patmu_d0_pv[dimDD_mu1_idx]) > {d0_min}) && (abs(patmu_d0_pv[dimDD_mu2_idx]) > {d0_min})'
+
 }
 signal_cut  = {
     '+2Displaced'   : 'patmu_nDisplaced > 1'
@@ -181,7 +173,7 @@ import pickle
 eff_dict = {
     'total'     : total_eff,
     'trigger'   : trig_eff,
-    'seleciton' : cut_eff
+    'selection' : cut_eff
 }
-with open(f'/nfs/cms/martialc/Displaced2024/llp/dev/eff/{signal}_1e0_1e5.eff','wb+') as file:
+with open(f'/nfs/cms/martialc/Displaced2024/llp/dev/eff/{signal}_D0Min_{D0Min}__1e0_1e5.eff','wb+') as file:
     pickle.dump(eff_dict,file)

@@ -336,7 +336,7 @@ class Histogram(Plot):
             selection,
             'goff'
         )
-        eff = hist.Integral()/self.nentries
+        eff = hist.GetEntries()/self.nentries
         del hist
         
         return eff
@@ -416,7 +416,7 @@ class Histogram(Plot):
     @property
     def efficiency(self):
         if self.hist:
-            return self.hist.Integral()/self.nentries
+            return self.hist.GetEntries()/self.nentries
 
 
 
