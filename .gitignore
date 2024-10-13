@@ -1,32 +1,13 @@
-analisis/ABCD_figs/*
-!analisis/ABCD_figs/.gitkeep
-
-analisis/CutsToDataFull/*
-!analisis/CutsToDataFull/.gitkeep
-
-analisis/EraBValidation/*
-!analisis/EraBValidation/.gitkeep
-
-analisis/fig_effs/*
-!analisis/fig_effs/.gitkeep
-
+# analisis/ABCD_figs/*
+# analisis/CutsToDataFull/*
+# analisis/EraBValidation/*
+# analisis/fig_effs/*
 analisis/old/
-
-analisis/sigsigPlots/*
-!analisis/sigsigPlots/.gitkeep
-
-analisis/SSValidation/*
-!analisis/SSValidation/.gitkeep
-
-analisis/TF_evol/*
-!analisis/TF_evol/.gitkeep
-
-analisis/vars_figs/*
-!analisis/vars_figs/.gitkeep
-
-analisis/ZmassValidation/*
-!analisis/ZmassValidation/.gitkeep
-
+# analisis/sigsigPlots/*
+# analisis/SSValidation/*
+# analisis/TF_evol/*
+# analisis/vars_figs/*
+# analisis/ZmassValidation/*
 analisis/Histogram.py
 analisis/ej_plot.py
 .vscode
