@@ -1,10 +1,74 @@
 executable             = condorExecutable.sh
-+CieIncludeAF          = True
-+CieSingularityImage   = cc7
++CieSingularityImage = el7
+    output                 = logs/run178/dummy_job_8.out
+log                    = logs/run178/dummy_job_8.log
+error                  = logs/run178/dummy_job_8.err
+arguments              = python3 ABCD_plot.py --branch hasVtx --region A --pred --Zmass
 #
-output                 = logs/data_B/job_0.out
-log                    = logs/data_B/job_0.log
-error                  = logs/data_B/job_0.err
-arguments              = python3 scripts/xTupler.py --output /pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/DiMuons_NPND_BC.root --tree SimpleNTupler/DDTree --input  /pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022B-ReReco-v2.root
+queue 1
+output                 = logs/run178/dummy_job_9.out
+log                    = logs/run178/dummy_job_9.log
+error                  = logs/run178/dummy_job_9.err
+arguments              = python3 ABCD_plot.py --branch invMass --region A --pred --Zmass
+#
+queue 1
+output                 = logs/run178/dummy_job_10.out
+log                    = logs/run178/dummy_job_10.log
+error                  = logs/run178/dummy_job_10.err
+arguments              = python3 ABCD_plot.py --branch pt --region A --pred --Zmass
+#
+queue 1
+output                 = logs/run178/dummy_job_11.out
+log                    = logs/run178/dummy_job_11.log
+error                  = logs/run178/dummy_job_11.err
+arguments              = python3 ABCD_plot.py --branch d0sig --region A --pred --Zmass
+#
+queue 1
+output                 = logs/run178/dummy_job_12.out
+log                    = logs/run178/dummy_job_12.log
+error                  = logs/run178/dummy_job_12.err
+arguments              = python3 ABCD_plot.py --branch iso --region A --pred --Zmass
+#
+queue 1
+output                 = logs/run178/dummy_job_13.out
+log                    = logs/run178/dummy_job_13.log
+error                  = logs/run178/dummy_job_13.err
+arguments              = python3 ABCD_plot.py --branch DeltaR --region A --pred --Zmass
+#
+queue 1
+output                 = logs/run178/dummy_job_15.out
+log                    = logs/run178/dummy_job_15.log
+error                  = logs/run178/dummy_job_15.err
+arguments              = python3 ABCD_plot.py --branch hasVtx --region A --pred --SS
+#
+queue 1
+output                 = logs/run178/dummy_job_16.out
+log                    = logs/run178/dummy_job_16.log
+error                  = logs/run178/dummy_job_16.err
+arguments              = python3 ABCD_plot.py --branch invMass --region A --pred --SS
+#
+queue 1
+output                 = logs/run178/dummy_job_17.out
+log                    = logs/run178/dummy_job_17.log
+error                  = logs/run178/dummy_job_17.err
+arguments              = python3 ABCD_plot.py --branch pt --region A --pred --SS
+#
+queue 1
+output                 = logs/run178/dummy_job_18.out
+log                    = logs/run178/dummy_job_18.log
+error                  = logs/run178/dummy_job_18.err
+arguments              = python3 ABCD_plot.py --branch d0sig --region A --pred --SS
+#
+queue 1
+output                 = logs/run178/dummy_job_19.out
+log                    = logs/run178/dummy_job_19.log
+error                  = logs/run178/dummy_job_19.err
+arguments              = python3 ABCD_plot.py --branch iso --region A --pred --SS
+#
+queue 1
+output                 = logs/run178/dummy_job_20.out
+log                    = logs/run178/dummy_job_20.log
+error                  = logs/run178/dummy_job_20.err
+arguments              = python3 ABCD_plot.py --branch DeltaR --region A --pred --SS
 #
 queue 1

@@ -1,0 +1,100 @@
+# Config file for file paths used in dicts
+
+
+DataFolder: '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/DiMuons_NPND_BC/'
+
+data_eraB: { name: 'era_B', path: 'DiMuons_NPND_B.root', lumi: 0.11, friend: '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedMuons/NTuples/May2023-v1/ntuple_2022_DoubleMuonRun2022B-ReReco-v2.root'}
+
+
+BackgroundFolder: '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/'
+BackgroundFolder_bruto: '/pnfs/ciemat.es/data/cms/store/user/escalant/displacedLeptons/testProduction_March2024/merged_files/'
+
+xsec_Zto2E_M_10_50    : 6744
+xsec_Zto2E_M_50_120   : 2219
+xsec_Zto2E_M_120_200  : 21.65
+xsec_Zto2E_M_200_400  : 3.058
+xsec_Zto2E_M_400_800  : 0.2691
+xsec_Zto2E_M_800_1500 : 1.915e-2
+
+DYto2Mu500k:
+
+  # - { name: 'DYto2Mu_50to120_bruto',    path: 'ntuple_2022_DYto2Mu_MLL-50to120.root',   x_sec: xsec_Zto2E_M_50_120,     events: 10150330 } --> # big DYto2Mu files ain't working
+  # - { name: 'DYto2Mu_120to200_bruto',   path: 'ntuple_2022_DYto2Mu_MLL-120to200.root',  x_sec: xsec_Zto2E_M_120_200,    events: 4999610 }
+  # - { name: 'DYto2Mu_10to50',           path: 'DYto2Mu/DYto2Mu_10to50.root',            x_sec: 6744,      events: 5026256 }
+  # - { name: 'DYto2Mu_50to120',          path: 'DYto2Mu/DYto2Mu_50to120.root',           x_sec: 2219,     events: 10150330 }
+  # - { name: 'DYto2Mu_120to200',         path: 'DYto2Mu/DYto2Mu_120to200.root',          x_sec: 21.65,    events: 4999610 }
+  # - { name: 'DYto2Mu_200to400',         path: 'DYto2Mu/DYto2Mu_200to400.root',          x_sec: 3.058,    events: 3051242 }
+  # - { name: 'DYto2Mu_400to800',         path: 'DYto2Mu/DYto2Mu_400to800.root',          x_sec: 0.2691,    events: 2930748 }
+  # - { name: 'DYto2Mu_800to1500',        path: 'DYto2Mu/DYto2Mu_800to1500.root',         x_sec: 1.915e-2,   events: 2088496 }
+  - { name: 'DYto2Mu_10to50_500k',      path: '202404_April24/DYto2Mu/DYto2Mu_10to50_500k.root',       x_sec: 6744,        events: 252575678.39195982 } #5e5 / 9950 * 5026256   # Proportional events for reduced samples (reduced_entries / process_entries * entries)
+  - { name: 'DYto2Mu_50to120_500k',     path: '202404_April24/DYto2Mu/DYto2Mu_50to120_500k.root',      x_sec: 2219,        events: 1564696.959653712 } #5e5 / 3243545 * 10150330
+  - { name: 'DYto2Mu_120to200_500k',    path: '202404_April24/DYto2Mu/DYto2Mu_120to200_500k.root',     x_sec: 21.65,       events: 1208372.5480812688 } #5e5 / 2068737 * 4999610  
+  - { name: 'DYto2Mu_200to400_500k',    path: '202404_April24/DYto2Mu/DYto2Mu_200to400_500k.root',     x_sec: 3.058,       events: 1005474.806137688 } #5e5 / 1517314 * 3051242 
+  - { name: 'DYto2Mu_400to800_500k',    path: '202404_April24/DYto2Mu/DYto2Mu_400to800_500k.root',     x_sec: 0.2691,      events: 826995.0325239316 } #5e5 / 1771926 * 2930748 
+  - { name: 'DYto2Mu_800to1500_500k',   path: '202404_April24/DYto2Mu/DYto2Mu_800to1500_500k.root',    x_sec: 1.915e-2,    events: 712920.875018604 } #5e5 / 1464746 * 2088496  
+
+DYto2Mu200k:
+
+  - { name: 'DYto2Mu_10to50_200k',      path: '202405_May24/DYto2Mu_200k/DYto2Mu_10to50_200k.root',       x_sec: 6744,        events: 101030271.35678393 } #2e5 / 9950 * 5026256   # Proportional events for reduced samples (reduced_entries / process_entries * entries)
+  - { name: 'DYto2Mu_50to120_200k',     path: '202405_May24/DYto2Mu_200k/DYto2Mu_50to120_200k.root',      x_sec: 2219,        events: 625878.783861485 } #2e5 / 3243545 * 10150330
+  - { name: 'DYto2Mu_120to200_200k',    path: '202405_May24/DYto2Mu_200k/DYto2Mu_120to200_200k.root',     x_sec: 21.65,       events: 483349.01923250756 } #2e5 / 2068737 * 4999610  
+  - { name: 'DYto2Mu_200to400_200k',    path: '202405_May24/DYto2Mu_200k/DYto2Mu_200to400_200k.root',     x_sec: 3.058,       events: 402189.9224550752 } #2e5 / 1517314 * 3051242 
+  - { name: 'DYto2Mu_400to800_200k',    path: '202405_May24/DYto2Mu_200k/DYto2Mu_400to800_200k.root',     x_sec: 0.2691,      events: 330798.01300957263 } #2e5 / 1771926 * 2930748 
+  - { name: 'DYto2Mu_800to1500_200k',   path: '202405_May24/DYto2Mu_200k/DYto2Mu_800to1500_200k.root',    x_sec: 1.915e-2,    events: 285168.35000744154 } #2e5 / 1464746 * 2088496  
+
+
+
+DYto2Tau:
+  - { name: 'DYto2Tau_10to50',          path: '202404_April24/DYto2Tau/DYto2Tau_10to50.root',      x_sec: 6744,        events: 5249261 }
+  - { name: 'DYto2Tau_50to120',         path: '202404_April24/DYto2Tau/DYto2Tau_50to120.root',     x_sec: 2219,        events: 10293446 }
+  - { name: 'DYto2Tau_120to200',        path: '202404_April24/DYto2Tau/DYto2Tau_120to200.root',    x_sec: 21.65,       events: 5249271 }
+  - { name: 'DYto2Tau_200to400',        path: '202404_April24/DYto2Tau/DYto2Tau_200to400.root',    x_sec: 3.058,       events: 5249271 }
+  - { name: 'DYto2Tau_400to800',        path: '202404_April24/DYto2Tau/DYto2Tau_400to800.root',    x_sec: 0.2691,      events: 3110408 }
+  - { name: 'DYto2Tau_800to1500',       path: '202404_April24/DYto2Tau/DYto2Tau_800to1500.root',   x_sec: 1.915e-2,    events: 2205546 }
+
+QCD:
+  - { name: 'QCD_15to20',       path: '202404_April24/QCD/QCD_15to20.root',      x_sec: 2982000,     events: 16043927 }
+  - { name: 'QCD_20to30',       path: '202404_April24/QCD/QCD_20to30.root',      x_sec: 2679000,     events: 111483708 }
+  - { name: 'QCD_30to50',       path: '202404_April24/QCD/QCD_30to50.root',      x_sec: 1465000,     events: 102293835 }
+  - { name: 'QCD_50to80',       path: '202404_April24/QCD/QCD_50to80.root',      x_sec: 402900,      events: 39602741 }
+  - { name: 'QCD_80to120',      path: '202404_April24/QCD/QCD_80to120.root',     x_sec: 95130,       events: 99098535 }
+  - { name: 'QCD_120to170',     path: '202404_April24/QCD/QCD_120to170.root',    x_sec: 22980,       events: 71567256 }
+  - { name: 'QCD_170to300',     path: '202404_April24/QCD/QCD_170to300.root',    x_sec: 7763,        events: 109948078 }
+  - { name: 'QCD_300to470',     path: '202404_April24/QCD/QCD_300to470.root',    x_sec: 699.1,       events: 103765161 }
+  - { name: 'QCD_470to600',     path: '202404_April24/QCD/QCD_470to600.root',    x_sec: 68.24,       events: 72202598 }
+  - { name: 'QCD_600to800',     path: '202404_April24/QCD/QCD_600to800.root',    x_sec: 21.37,       events: 72565100 }
+  - { name: 'QCD_800to1000',    path: '202404_April24/QCD/QCD_800to1000.root',   x_sec: 3.913,       events: 131481400 }
+  # - { name: 'QCD_1000toInf',    path: 'QCD/QCD_1000toInf.root',   x_sec: null,        events: 45333749 }
+
+
+FolderSTopSignal: '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/STopToMuB_v05/'
+# If necessary add FolderSTopSignal_bruto as for bkg
+
+SMuon:
+  - { path: 'SMuonToMuGravitino_100_1.root' }
+
+
+FolderSMuonSignal: '/pnfs/ciemat.es/data/cms/store/user/martialc/displacedLeptons/202403_March24/SMuonToMuGravitino_v01/'
+# If necessary add FolderSMuonSignal_bruto as for bkg
+
+
+FolderGenSmuonSig: '/pnfs/ciemat.es/data/cms/store/user/escalant/'
+
+GenSmuonSig:
+  '100':
+    '1': 'SMuonToMuGravitino-M_100_ctau_1mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095140/0000/'
+    '10':  'SMuonToMuGravitino-M_100_ctau_10mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095118/0000/'
+    '100':  'SMuonToMuGravitino-M_100_ctau_100mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095057/0000/'
+    '1000':  'SMuonToMuGravitino-M_100_ctau_1000mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095034/0000/'
+    '10000':  'SMuonToMuGravitino-M_100_ctau_10000mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095012/0000/'
+    '100000':  'SMuonToMuGravitino-M_100_ctau_100000mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_094950/0000/'
+
+  '500':
+    '1': 'SMuonToMuGravitino-M_500_ctau_1mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095357/0000/'
+    '10': 'SMuonToMuGravitino-M_500_ctau_10mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095334/0000/'
+    '100': 'SMuonToMuGravitino-M_500_ctau_100mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095312/0000/'
+    '1000': 'SMuonToMuGravitino-M_500_ctau_1000mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095248/0000/'
+    '10000': 'SMuonToMuGravitino-M_500_ctau_10000mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095227/0000/'
+    '100000': 'SMuonToMuGravitino-M_500_ctau_100000mm_TuneCP5_13p6TeV_pythia8/AODSIM-November2023_v1/231122_095203/0000/'
+
+

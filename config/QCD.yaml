@@ -1,0 +1,13 @@
+QCD_files:
+  - { name: 'QCD_15to20',       path: 'QCD/QCD_15to20.root',      x_sec: 2982000,     events: 16043927 }
+  - { name: 'QCD_20to30',       path: 'QCD/QCD_20to30.root',      x_sec: 2679000,     events: 111483708 }
+  - { name: 'QCD_30to50',       path: 'QCD/QCD_30to50.root',      x_sec: 1465000,     events: 102293835 }
+  - { name: 'QCD_50to80',       path: 'QCD/QCD_50to80.root',      x_sec: 402900,      events: 39602741 }
+  - { name: 'QCD_80to120',      path: 'QCD/QCD_80to120.root',     x_sec: 95130,       events: 99098535 }
+  - { name: 'QCD_120to170',     path: 'QCD/QCD_120to170.root',    x_sec: 22980,       events: 71567256 }
+  - { name: 'QCD_170to300',     path: 'QCD/QCD_170to300.root',    x_sec: 7763,        events: 109948078 }
+  - { name: 'QCD_300to470',     path: 'QCD/QCD_300to470.root',    x_sec: 699.1,       events: 103765161 }
+  - { name: 'QCD_470to600',     path: 'QCD/QCD_470to600.root',    x_sec: 68.24,       events: 72202598 }
+  - { name: 'QCD_600to800',     path: 'QCD/QCD_600to800.root',    x_sec: 21.37,       events: 72565100 }
+  - { name: 'QCD_800to1000',    path: 'QCD/QCD_800to1000.root',   x_sec: 3.913,       events: 131481400 }
+  # - { name: 'QCD_1000toInf',    path: 'QCD/QCD_1000toInf.root',   x_sec: null,        events: 45333749 }

@@ -1,0 +1,16 @@
+DYto2Mu_files:
+
+  # - { name: 'DYto2Mu_50to120_bruto',    path: 'ntuple_2022_DYto2Mu_MLL-50to120.root',   x_sec: xsec_Zto2E_M_50_120,     events: 10150330 }
+  # - { name: 'DYto2Mu_120to200_bruto',   path: 'ntuple_2022_DYto2Mu_MLL-120to200.root',  x_sec: xsec_Zto2E_M_120_200,    events: 4999610 }
+  # - { name: 'DYto2Mu_10to50',           path: 'DYto2Mu/DYto2Mu_10to50.root',            x_sec: 6744,      events: 5026256 }
+  # - { name: 'DYto2Mu_50to120',          path: 'DYto2Mu/DYto2Mu_50to120.root',           x_sec: 2219,     events: 10150330 }
+  # - { name: 'DYto2Mu_120to200',         path: 'DYto2Mu/DYto2Mu_120to200.root',          x_sec: 21.65,    events: 4999610 }
+  # - { name: 'DYto2Mu_200to400',         path: 'DYto2Mu/DYto2Mu_200to400.root',          x_sec: 3.058,    events: 3051242 }
+  # - { name: 'DYto2Mu_400to800',         path: 'DYto2Mu/DYto2Mu_400to800.root',          x_sec: 0.2691,    events: 2930748 }
+  # - { name: 'DYto2Mu_800to1500',        path: 'DYto2Mu/DYto2Mu_800to1500.root',         x_sec: 1.915e-2,   events: 2088496 }
+  - { name: 'DYto2Mu_10to50_500k',      path: 'DYto2Mu/DYto2Mu_10to50_500k.root',       x_sec: 6744,      events: 5e5 / 9950 * 5026256 }      # Proportional events for reduced samples
+  - { name: 'DYto2Mu_50to120_500k',     path: 'DYto2Mu/DYto2Mu_50to120_500k.root',      x_sec: 2219,     events: 5e5 / 3243545 * 10150330 }  # Proportional events for reduced samples
+  - { name: 'DYto2Mu_120to200_500k',    path: 'DYto2Mu/DYto2Mu_120to200_500k.root',     x_sec: 21.65,    events: 5e5 / 2068737 * 4999610 }   # Proportional events for reduced samples   
+  - { name: 'DYto2Mu_200to400_500k',    path: 'DYto2Mu/DYto2Mu_200to400_500k.root',     x_sec: 3.058,    events: 5e5 / 1517314 * 3051242 }   # Proportional events for reduced samples
+  - { name: 'DYto2Mu_400to800_500k',    path: 'DYto2Mu/DYto2Mu_400to800_500k.root',     x_sec: 0.2691,    events: 5e5 / 1771926 * 2930748 }   # Proportional events for reduced samples
+  - { name: 'DYto2Mu_800to1500_500k',   path: 'DYto2Mu/DYto2Mu_800to1500_500k.root',    x_sec: 1.915e-2,   events: 5e5 / 1464746 * 2088496 }   # Proportional events for reduced samples

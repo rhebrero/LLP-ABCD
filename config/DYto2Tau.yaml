@@ -1,0 +1,7 @@
+DYto2Tau_files:
+  - { name: 'DYto2Tau_10to50',          path: 'DYto2Tau/DYto2Tau_10to50.root',      x_sec: 6744,      events: 5249261 }
+  - { name: 'DYto2Tau_50to120',         path: 'DYto2Tau/DYto2Tau_50to120.root',     x_sec: 2219,     events: 10293446 }
+  - { name: 'DYto2Tau_120to200',        path: 'DYto2Tau/DYto2Tau_120to200.root',    x_sec: 21.65,    events: 5249271 }
+  - { name: 'DYto2Tau_200to400',        path: 'DYto2Tau/DYto2Tau_200to400.root',    x_sec: 3.058,    events: 5249271 }
+  - { name: 'DYto2Tau_400to800',        path: 'DYto2Tau/DYto2Tau_400to800.root',    x_sec: 0.2691,    events: 3110408 }
+  - { name: 'DYto2Tau_800to1500',       path: 'DYto2Tau/DYto2Tau_800to1500.root',   x_sec: 1.915e-2,   events: 2205546 }
