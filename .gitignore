@@ -10,6 +10,9 @@ analisis/old/
 # analisis/ZmassValidation/*
 analisis/Histogram.py
 analisis/ej_plot.py
+Cert_Collisions2022_355100_362760_Muon.json
+Cert_Collisions2023_366442_370790_Muon.json
+README.md
 .vscode
 condor/logs
 **/__pycache__
